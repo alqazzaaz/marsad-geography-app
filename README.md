@@ -109,7 +109,7 @@ Marsad is being built in deliberate phases:
 | 3 | Interactive Mapbox map + country facts | ✅ |
 | 4 | AI insights (Claude) + budget guard + rate limiting | ✅ |
 | 5 | Language & culture card + "Did You Know?" feed | ✅ |
-| 6 | Authentication (JWT, browse-free / login-to-save) | ⏳ |
+| 6 | Authentication (JWT, browse-free / login-to-save) | ✅ |
 | 7 | About page + logo + polish | ⏳ |
 | 8 | Observability (Sentry) + CI/CD + deployment | ⏳ |
 

@@ -11,8 +11,10 @@ import mapboxgl from 'mapbox-gl';
 
 import { STRINGS } from '../../core/i18n/strings';
 import { CountryDetail } from '../../core/models/country.model';
+import { AuthService } from '../../core/services/auth.service';
 import { ConfigService } from '../../core/services/config.service';
 import { CountryService } from '../../core/services/country.service';
+import { AuthPanel } from '../auth/auth-panel';
 import { CountryPanel } from '../country/country-panel';
 import { FeedCard } from '../feed/feed-card';
 
@@ -30,13 +32,14 @@ const WORLDVIEW_FILTER: mapboxgl.FilterSpecification = [
 
 @Component({
   selector: 'app-map-page',
-  imports: [CountryPanel, FeedCard],
+  imports: [AuthPanel, CountryPanel, FeedCard],
   templateUrl: './map-page.html',
   styleUrl: './map-page.scss',
 })
 export class MapPage implements AfterViewInit, OnDestroy {
   private readonly configService = inject(ConfigService);
   private readonly countryService = inject(CountryService);
+  readonly auth = inject(AuthService);
 
   private readonly mapContainer = viewChild.required<ElementRef<HTMLDivElement>>('mapContainer');
 
@@ -49,6 +52,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
   readonly mapError = signal(false);
   readonly welcomeVisible = signal(true);
   readonly panelOpen = signal(false);
+  readonly authOpen = signal(false);
   readonly country = signal<CountryDetail | null>(null);
   readonly countryLoading = signal(false);
   readonly countryError = signal(false);

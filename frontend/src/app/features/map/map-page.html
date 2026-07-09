@@ -6,6 +6,23 @@
     <span class="brand-name">{{ t.brand.name }}</span>
   </header>
 
+  <div class="account" [class.tucked]="panelOpen()">
+    @if (auth.currentUser(); as user) {
+      <span class="account-name">{{ user.display_name }}</span>
+      <button class="account-btn" type="button" (click)="auth.logout()">
+        {{ t.auth.signOut }}
+      </button>
+    } @else {
+      <button class="account-btn" type="button" (click)="authOpen.set(true)">
+        {{ t.auth.signIn }}
+      </button>
+    }
+  </div>
+
+  @if (authOpen()) {
+    <app-auth-panel (closed)="authOpen.set(false)" />
+  }
+
   @if (welcomeVisible() && !tokenMissing() && !mapError()) {
     <div class="welcome" (click)="dismissWelcome()">
       <div class="welcome-inner" (click)="$event.stopPropagation()">

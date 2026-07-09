@@ -1,0 +1,42 @@
+<div class="backdrop" (click)="closed.emit()">
+  <div class="dialog" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+    <button class="close" type="button" (click)="closed.emit()" [attr.aria-label]="t.close">✕</button>
+
+    <h2 class="title">
+      {{ mode() === 'login' ? t.signIn : t.createAccount }}
+    </h2>
+    <p class="hint">{{ t.hint }}</p>
+
+    <form (ngSubmit)="submit()">
+      @if (mode() === 'register') {
+        <label>
+          <span>{{ t.displayName }}</span>
+          <input name="displayName" type="text" required minlength="2" maxlength="80"
+                 autocomplete="name" [(ngModel)]="displayName" />
+        </label>
+      }
+      <label>
+        <span>{{ t.email }}</span>
+        <input name="email" type="email" required autocomplete="email" [(ngModel)]="email" />
+      </label>
+      <label>
+        <span>{{ t.password }}</span>
+        <input name="password" type="password" required minlength="8"
+               [attr.autocomplete]="mode() === 'login' ? 'current-password' : 'new-password'"
+               [(ngModel)]="password" />
+      </label>
+
+      @if (error(); as message) {
+        <p class="error">{{ message }}</p>
+      }
+
+      <button class="submit" type="submit" [disabled]="busy()">
+        {{ mode() === 'login' ? t.submitLogin : t.submitRegister }}
+      </button>
+    </form>
+
+    <button class="switch" type="button" (click)="switchMode()">
+      {{ mode() === 'login' ? t.needAccount : t.haveAccount }}
+    </button>
+  </div>
+</div>

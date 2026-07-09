@@ -55,6 +55,12 @@ class Settings(BaseSettings):
     # Max AI-generation requests per IP per day.
     ai_rate_limit_per_day: int = 30
 
+    # --- Authentication (JWT) ---
+    # MUST be overridden with a long random value in production (.env).
+    jwt_secret_key: str = "dev-only-secret-change-me"
+    jwt_algorithm: str = "HS256"
+    access_token_expire_minutes: int = 60 * 24 * 7  # 7 days
+
     @property
     def database_url(self) -> str:
         return (

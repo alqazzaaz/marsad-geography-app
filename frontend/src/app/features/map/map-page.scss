@@ -41,6 +41,47 @@
   }
 }
 
+/* --- Account, top-right --- */
+.account {
+  position: absolute;
+  top: 1.4rem;
+  right: 1.8rem;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  transition: opacity 0.4s ease;
+
+  &.tucked {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+.account-name {
+  color: var(--text-300);
+  font-size: 0.85rem;
+}
+
+.account-btn {
+  padding: 0.45rem 1.1rem;
+  border: 1px solid rgba(201, 162, 75, 0.4);
+  border-radius: 999px;
+  background: rgba(11, 15, 23, 0.75);
+  backdrop-filter: blur(10px);
+  color: var(--text-300);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    color: var(--gold-300);
+    border-color: var(--gold-400);
+  }
+}
+
 /* --- Welcome moment --- */
 .welcome {
   position: absolute;

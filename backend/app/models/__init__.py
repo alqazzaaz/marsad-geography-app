@@ -4,5 +4,6 @@ from app.models.cache_sync import CacheSync
 from app.models.country import Country
 from app.models.country_insight import CountryInsight
 from app.models.feed_fact import FeedFact
+from app.models.user import User
 
-__all__ = ["CacheSync", "Country", "CountryInsight", "FeedFact"]
+__all__ = ["CacheSync", "Country", "CountryInsight", "FeedFact", "User"]
