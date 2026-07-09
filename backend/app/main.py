@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 import app.models  # noqa: F401  (register ORM models on Base.metadata)
+from app.api.routes import config as config_route
 from app.api.routes import countries, health
 from app.core.config import get_settings
 from app.core.redis import close_redis
@@ -40,6 +41,7 @@ app.add_middleware(
 
 app.include_router(health.router, prefix=settings.api_prefix)
 app.include_router(countries.router, prefix=settings.api_prefix)
+app.include_router(config_route.router, prefix=settings.api_prefix)
 
 
 @app.get("/")

@@ -1,0 +1,45 @@
+<div class="observatory">
+  <div #mapContainer class="map"></div>
+
+  <header class="brand" [class.tucked]="panelOpen()">
+    <span class="brand-arabic">{{ t.brand.nameArabic }}</span>
+    <span class="brand-name">{{ t.brand.name }}</span>
+  </header>
+
+  @if (welcomeVisible() && !tokenMissing() && !mapError()) {
+    <div class="welcome" (click)="dismissWelcome()">
+      <div class="welcome-inner" (click)="$event.stopPropagation()">
+        <p class="welcome-arabic">{{ t.brand.nameArabic }}</p>
+        <h1 class="welcome-title">
+          {{ t.welcome.line1 }}<br />
+          {{ t.welcome.line2 }}
+        </h1>
+        <div class="welcome-rule" aria-hidden="true"></div>
+        <p class="welcome-sub">{{ t.welcome.line3 }}</p>
+        <button class="welcome-enter" type="button" (click)="dismissWelcome()">
+          {{ t.welcome.enter }}
+        </button>
+      </div>
+    </div>
+  }
+
+  @if (tokenMissing()) {
+    <div class="notice">
+      <p>{{ t.map.tokenMissing }}</p>
+    </div>
+  } @else if (mapError()) {
+    <div class="notice">
+      <p>{{ t.map.loadError }}</p>
+    </div>
+  }
+
+  @if (panelOpen()) {
+    <app-country-panel
+      [country]="country()"
+      [loading]="countryLoading()"
+      [error]="countryError()"
+      (closed)="closePanel()"
+      (borderSelected)="selectCountry($event)"
+    />
+  }
+</div>

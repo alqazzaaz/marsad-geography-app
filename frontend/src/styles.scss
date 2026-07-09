@@ -1,1 +1,49 @@
-/* You can add global styles to this file, and also import other style files */
+/* Marsad global styles & design tokens */
+@use "mapbox-gl/dist/mapbox-gl.css";
+
+:root {
+  /* Palette — midnight observatory with gold accents */
+  --ink-900: #070a10;
+  --ink-800: #0b0f17;
+  --ink-700: #121826;
+  --ink-600: #1c2436;
+  --gold-500: #c9a24b;
+  --gold-400: #d9b96c;
+  --gold-300: #e8d29a;
+  --text-100: #f2efe8;
+  --text-300: #cfc9bc;
+  --text-500: #948e80;
+
+  /* Typography */
+  --font-display: "Cormorant Garamond", "Times New Roman", serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-arabic: "Amiri", serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--ink-900);
+  color: var(--text-100);
+  font-family: var(--font-body);
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: rgba(201, 162, 75, 0.35);
+}
+
+/* Slim, unobtrusive scrollbars for panels */
+*::-webkit-scrollbar {
+  width: 6px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--ink-600);
+  border-radius: 3px;
+}

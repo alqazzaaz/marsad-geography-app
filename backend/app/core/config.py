@@ -35,6 +35,7 @@ class Settings(BaseSettings):
     # --- External services (used from Phase 2/4 onward) ---
     countries_api_base_url: str = "https://countries.dev"
     anthropic_api_key: str = ""
+    mapbox_access_token: str = ""
 
     # --- Caching (country hard facts) ---
     country_cache_ttl_seconds: int = 86400  # Redis TTL: 24h

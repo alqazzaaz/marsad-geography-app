@@ -1,0 +1,67 @@
+<aside class="panel" role="dialog" aria-label="Country profile">
+  <button class="close" type="button" (click)="closed.emit()" [attr.aria-label]="t.close">✕</button>
+
+  @if (loading()) {
+    <div class="state">
+      <div class="spinner" aria-hidden="true"></div>
+      <p>{{ t.loading }}</p>
+    </div>
+  } @else if (error()) {
+    <div class="state">
+      <p>{{ t.loadError }}</p>
+    </div>
+  } @else if (country(); as c) {
+    <header class="head">
+      @if (c.flag_png) {
+        <img class="flag" [src]="c.flag_png" [alt]="c.name + ' flag'" />
+      }
+      <h2 class="name">{{ c.name }}</h2>
+      @if (c.native_name && c.native_name !== c.name) {
+        <p class="native">{{ c.native_name }}</p>
+      }
+      @if (c.region) {
+        <p class="region">{{ c.region }}@if (c.subregion) {<span> · {{ c.subregion }}</span>}</p>
+      }
+    </header>
+
+    <dl class="facts">
+      @if (c.capital) {
+        <div class="fact"><dt>{{ t.capital }}</dt><dd>{{ c.capital }}</dd></div>
+      }
+      @if (c.population) {
+        <div class="fact"><dt>{{ t.population }}</dt><dd>{{ c.population | number }}</dd></div>
+      }
+      @if (c.area) {
+        <div class="fact"><dt>{{ t.area }}</dt><dd>{{ c.area | number }} km²</dd></div>
+      }
+      @if (c.languages.length) {
+        <div class="fact"><dt>{{ t.languages }}</dt><dd>{{ languageList(c) }}</dd></div>
+      }
+      @if (c.currencies.length) {
+        <div class="fact"><dt>{{ t.currencies }}</dt><dd>{{ currencyList(c) }}</dd></div>
+      }
+      @if (c.timezones.length) {
+        <div class="fact"><dt>{{ t.timezones }}</dt><dd>{{ c.timezones.join(', ') }}</dd></div>
+      }
+      @if (c.calling_codes.length) {
+        <div class="fact"><dt>{{ t.callingCode }}</dt><dd>+{{ c.calling_codes.join(', +') }}</dd></div>
+      }
+      @if (c.top_level_domains.length) {
+        <div class="fact"><dt>{{ t.domain }}</dt><dd>{{ c.top_level_domains.join(', ') }}</dd></div>
+      }
+    </dl>
+
+    @if (c.borders.length) {
+      <section class="borders">
+        <h3>{{ t.borders }}</h3>
+        <div class="chips">
+          @for (border of c.borders; track border) {
+            <button class="chip" type="button" (click)="borderSelected.emit(border)">
+              {{ border }}
+            </button>
+          }
+        </div>
+      </section>
+    }
+  }
+</aside>
