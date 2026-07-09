@@ -5,12 +5,15 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+import asyncio
+
 import app.models  # noqa: F401  (register ORM models on Base.metadata)
 from app.api.routes import config as config_route
-from app.api.routes import countries, health
+from app.api.routes import countries, health, insights
 from app.core.config import get_settings
 from app.core.redis import close_redis
 from app.db.session import Base, engine
+from app.services.insights_worker import run_insights_worker
 
 settings = get_settings()
 
@@ -19,7 +22,13 @@ settings = get_settings()
 async def lifespan(app: FastAPI):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+    worker = asyncio.create_task(run_insights_worker())
     yield
+    worker.cancel()
+    try:
+        await worker
+    except asyncio.CancelledError:
+        pass
     await close_redis()
     await engine.dispose()
 
@@ -42,6 +51,7 @@ app.add_middleware(
 app.include_router(health.router, prefix=settings.api_prefix)
 app.include_router(countries.router, prefix=settings.api_prefix)
 app.include_router(config_route.router, prefix=settings.api_prefix)
+app.include_router(insights.router, prefix=settings.api_prefix)
 
 
 @app.get("/")

@@ -68,6 +68,12 @@
   border-top-color: var(--gold-400);
   border-radius: 50%;
   animation: spin 0.9s linear infinite;
+
+  &.small {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
 }
 
 @keyframes spin {
@@ -173,4 +179,109 @@
       border-color: var(--gold-400);
     }
   }
+}
+
+/* --- AI insights --- */
+.insights {
+  margin-top: 1.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(201, 162, 75, 0.18);
+}
+
+.insights-head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+
+  h3 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--gold-300);
+  }
+
+  .badge {
+    padding: 0.15rem 0.55rem;
+    border: 1px solid rgba(201, 162, 75, 0.4);
+    border-radius: 999px;
+    color: var(--gold-400);
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+  }
+}
+
+.insights-wait {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--text-500);
+  font-size: 0.88rem;
+
+  p {
+    margin: 0;
+  }
+}
+
+.insights-note {
+  margin: 0;
+  color: var(--text-500);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.insight-group {
+  margin-bottom: 1.4rem;
+
+  h4 {
+    margin: 0 0 0.6rem;
+    color: var(--text-500);
+    font-size: 0.72rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+  }
+}
+
+.insight {
+  margin-bottom: 0.9rem;
+
+  h5 {
+    margin: 0 0 0.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    color: var(--text-100);
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  p {
+    margin: 0;
+    color: var(--text-300);
+    font-size: 0.88rem;
+    line-height: 1.55;
+    font-weight: 300;
+  }
+
+  .tag {
+    padding: 0.08rem 0.45rem;
+    border-radius: 999px;
+    background: rgba(201, 162, 75, 0.15);
+    color: var(--gold-400);
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+}
+
+.insights-disclaimer {
+  margin: 1.2rem 0 0;
+  color: var(--text-500);
+  font-size: 0.72rem;
+  font-style: italic;
+  line-height: 1.5;
 }

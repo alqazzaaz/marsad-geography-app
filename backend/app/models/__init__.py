@@ -2,5 +2,6 @@
 
 from app.models.cache_sync import CacheSync
 from app.models.country import Country
+from app.models.country_insight import CountryInsight
 
-__all__ = ["CacheSync", "Country"]
+__all__ = ["CacheSync", "Country", "CountryInsight"]

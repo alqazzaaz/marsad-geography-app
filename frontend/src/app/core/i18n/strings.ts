@@ -34,4 +34,17 @@ export const STRINGS = {
     loadError: 'Could not load this country. Please try again.',
     close: 'Close',
   },
+  insights: {
+    heading: 'Marsad Insights',
+    badge: 'AI-crafted',
+    generating: 'The observatory is composing insights for this country…',
+    error: 'Insights are unavailable right now.',
+    limit: 'Insight generation is paused for today — already-explored countries remain available.',
+    surprisingHistory: 'Surprising History',
+    culturalContext: 'Cultural Context',
+    notablePeople: 'Notable People',
+    hiddenGems: 'Hidden Gems',
+    lesserKnown: 'worth knowing',
+    disclaimer: 'Insights are AI-generated interpretations — hard facts above come from verified data.',
+  },
 } as const;

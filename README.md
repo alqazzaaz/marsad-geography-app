@@ -44,10 +44,10 @@ The design goal is that **the same country never triggers a second Claude API ca
               └────────┘  └────────────┘  └──────────────────────┘
 ```
 
-- **Multi-layer caching:** Redis → PostgreSQL → external API, with write-back to both layers on a miss
-- **Async processing:** heavy Claude generation runs via a background worker over Redis Pub/Sub, so user requests return fast
-- **Rate limiting:** AI-generation requests are limited per user/IP per day
-- **Daily budget guard:** a configurable safeguard stops Claude API calls once a daily cost threshold is reached
+- **Multi-layer caching:** Redis → PostgreSQL → external API, with write-back to both layers on a miss. AI insights persist in PostgreSQL forever, so a country's insights are generated exactly once.
+- **Async processing:** a cache miss on insights publishes a job to Redis Pub/Sub and returns `202` immediately; a background worker does the slow Claude call and writes back to both stores while the frontend polls
+- **Rate limiting:** AI-generation requests are limited per IP per day (cached insights are always served freely)
+- **Daily budget guard:** Claude usage is metered in USD from real token counts; once the configurable daily ceiling is hit, generation pauses until the next day (`503`)
 - **Observability:** Sentry error tracking in production
 
 ## Getting Started
@@ -107,7 +107,7 @@ Marsad is being built in deliberate phases:
 | 1 | Foundation: project structure, Docker, PostgreSQL + Redis, health check | ✅ |
 | 2 | Country data + multi-layer caching core | ✅ |
 | 3 | Interactive Mapbox map + country facts | ✅ |
-| 4 | AI insights (Claude) + budget guard + rate limiting | ⏳ |
+| 4 | AI insights (Claude) + budget guard + rate limiting | ✅ |
 | 5 | Language & culture card + "Did You Know?" feed | ⏳ |
 | 6 | Authentication (JWT, browse-free / login-to-save) | ⏳ |
 | 7 | About page + logo + polish | ⏳ |

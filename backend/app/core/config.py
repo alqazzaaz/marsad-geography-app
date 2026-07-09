@@ -41,6 +41,20 @@ class Settings(BaseSettings):
     country_cache_ttl_seconds: int = 86400  # Redis TTL: 24h
     country_refresh_days: int = 30  # PostgreSQL rows older than this are re-fetched
 
+    # --- AI insights (Claude) ---
+    anthropic_model: str = "claude-sonnet-4-6"
+    claude_max_tokens: int = 4096
+    # Pricing per million tokens for the model above — used by the budget guard.
+    claude_input_cost_per_mtok: float = 3.0
+    claude_output_cost_per_mtok: float = 15.0
+    # Hard daily spend ceiling (USD). Once reached, no more Claude calls that day.
+    claude_daily_budget_usd: float = 5.0
+    # Insights stay in Redis this long; PostgreSQL keeps them forever so the
+    # same country never triggers a second Claude call.
+    insights_cache_ttl_seconds: int = 86400
+    # Max AI-generation requests per IP per day.
+    ai_rate_limit_per_day: int = 30
+
     @property
     def database_url(self) -> str:
         return (

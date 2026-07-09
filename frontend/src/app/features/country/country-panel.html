@@ -63,5 +63,77 @@
         </div>
       </section>
     }
+
+    <section class="insights">
+      <header class="insights-head">
+        <h3>{{ ti.heading }}</h3>
+        <span class="badge">{{ ti.badge }}</span>
+      </header>
+
+      @switch (insightsState()) {
+        @case ('generating') {
+          <div class="insights-wait">
+            <div class="spinner small" aria-hidden="true"></div>
+            <p>{{ ti.generating }}</p>
+          </div>
+        }
+        @case ('limited') {
+          <p class="insights-note">{{ ti.limit }}</p>
+        }
+        @case ('error') {
+          <p class="insights-note">{{ ti.error }}</p>
+        }
+        @case ('ready') {
+          @if (insights(); as ins) {
+            <div class="insight-group">
+              <h4>{{ ti.surprisingHistory }}</h4>
+              @for (item of ins.surprising_history; track item.title) {
+                <article class="insight">
+                  <h5>{{ item.title }}</h5>
+                  <p>{{ item.detail }}</p>
+                </article>
+              }
+            </div>
+
+            <div class="insight-group">
+              <h4>{{ ti.culturalContext }}</h4>
+              @for (item of ins.cultural_context; track item.title) {
+                <article class="insight">
+                  <h5>{{ item.title }}</h5>
+                  <p>{{ item.detail }}</p>
+                </article>
+              }
+            </div>
+
+            <div class="insight-group">
+              <h4>{{ ti.notablePeople }}</h4>
+              @for (person of ins.notable_people; track person.name) {
+                <article class="insight">
+                  <h5>
+                    {{ person.name }}
+                    @if (!person.widely_known) {
+                      <span class="tag">{{ ti.lesserKnown }}</span>
+                    }
+                  </h5>
+                  <p>{{ person.known_for }}</p>
+                </article>
+              }
+            </div>
+
+            <div class="insight-group">
+              <h4>{{ ti.hiddenGems }}</h4>
+              @for (gem of ins.hidden_gems; track gem.name) {
+                <article class="insight">
+                  <h5>{{ gem.name }}</h5>
+                  <p>{{ gem.detail }}</p>
+                </article>
+              }
+            </div>
+
+            <p class="insights-disclaimer">{{ ti.disclaimer }}</p>
+          }
+        }
+      }
+    </section>
   }
 </aside>
