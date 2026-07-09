@@ -76,6 +76,10 @@ docker compose up --build
 | API docs (Swagger) | http://localhost:8000/docs |
 | Health check | http://localhost:8000/api/health |
 
+Country endpoints (`/api/countries`, `/api/countries/{code}`) return an
+`X-Cache-Source` header (`redis` | `postgres` | `api`) showing which cache
+layer served the response.
+
 ### Run for development (hot reload)
 
 ```bash
@@ -101,7 +105,7 @@ Marsad is being built in deliberate phases:
 | Phase | Scope | Status |
 |---|---|---|
 | 1 | Foundation: project structure, Docker, PostgreSQL + Redis, health check | ✅ |
-| 2 | Country data + multi-layer caching core | ⏳ |
+| 2 | Country data + multi-layer caching core | ✅ |
 | 3 | Interactive Mapbox map + country facts | ⏳ |
 | 4 | AI insights (Claude) + budget guard + rate limiting | ⏳ |
 | 5 | Language & culture card + "Did You Know?" feed | ⏳ |

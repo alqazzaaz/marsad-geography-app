@@ -36,6 +36,10 @@ class Settings(BaseSettings):
     countries_api_base_url: str = "https://countries.dev"
     anthropic_api_key: str = ""
 
+    # --- Caching (country hard facts) ---
+    country_cache_ttl_seconds: int = 86400  # Redis TTL: 24h
+    country_refresh_days: int = 30  # PostgreSQL rows older than this are re-fetched
+
     @property
     def database_url(self) -> str:
         return (
