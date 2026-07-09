@@ -23,8 +23,46 @@ export interface CountryInsights {
   hidden_gems: HiddenGem[];
 }
 
-export interface InsightsResponse {
+export interface AiContentResponse<T> {
   status: 'ready' | 'generating';
-  data?: CountryInsights;
+  data?: T;
   generated_at?: string;
+}
+
+export type InsightsResponse = AiContentResponse<CountryInsights>;
+
+/** Language & culture card (backend kind: "culture"). */
+
+export interface KeyPhrase {
+  meaning: string;
+  local: string;
+  pronunciation: string;
+}
+
+export interface EtiquetteItem {
+  topic: string;
+  advice: string;
+}
+
+export interface CountryCulture {
+  key_phrases: KeyPhrase[];
+  dos: string[];
+  donts: string[];
+  etiquette: EtiquetteItem[];
+}
+
+export type CultureResponse = AiContentResponse<CountryCulture>;
+
+/** "Did You Know?" feed. */
+
+export interface FeedFact {
+  id: number;
+  country_name: string;
+  alpha2_code: string | null;
+  fact: string;
+}
+
+export interface FeedResponse {
+  status: 'ready' | 'generating';
+  facts: FeedFact[];
 }

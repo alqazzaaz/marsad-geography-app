@@ -93,6 +93,77 @@ INSIGHTS_SCHEMA: dict[str, Any] = {
     "additionalProperties": False,
 }
 
+CULTURE_SCHEMA: dict[str, Any] = {
+    "type": "object",
+    "properties": {
+        "key_phrases": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "meaning": {"type": "string"},
+                    "local": {"type": "string"},
+                    "pronunciation": {"type": "string"},
+                },
+                "required": ["meaning", "local", "pronunciation"],
+                "additionalProperties": False,
+            },
+        },
+        "dos": {"type": "array", "items": {"type": "string"}},
+        "donts": {"type": "array", "items": {"type": "string"}},
+        "etiquette": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {"topic": {"type": "string"}, "advice": {"type": "string"}},
+                "required": ["topic", "advice"],
+                "additionalProperties": False,
+            },
+        },
+    },
+    "required": ["key_phrases", "dos", "donts", "etiquette"],
+    "additionalProperties": False,
+}
+
+CULTURE_PROMPT = """Write the Marsad language & culture card for {country_name} \
+(primary language(s): {languages}).
+
+Produce:
+- key_phrases: 6 essential phrases in the country's most widely spoken local language — \
+meaning (in English, e.g. "Hello", "Thank you"), local (written in the local script), and \
+pronunciation (simple phonetic spelling an English speaker can read aloud).
+- dos: 4 things a visitor should do to be polite and respectful.
+- donts: 4 things considered rude or offensive that visitors often get wrong.
+- etiquette: 4 practical briefings, one each on the topics "Tipping", "Dress code", \
+"Greetings", and "Dining" — concrete, locally accurate advice, not generic travel tips."""
+
+FEED_SCHEMA: dict[str, Any] = {
+    "type": "object",
+    "properties": {
+        "facts": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "country_name": {"type": "string"},
+                    "alpha2_code": {"type": "string"},
+                    "fact": {"type": "string"},
+                },
+                "required": ["country_name", "alpha2_code", "fact"],
+                "additionalProperties": False,
+            },
+        },
+    },
+    "required": ["facts"],
+    "additionalProperties": False,
+}
+
+FEED_PROMPT = """Write {count} entries for Marsad's "Did You Know?" feed — genuinely \
+surprising, well-written facts, each about a DIFFERENT country. Each entry: country_name, \
+its ISO 3166-1 alpha-2 code, and one fact of 1–3 sentences that would make a curious reader \
+say "I had no idea." Draw from history, geography, language, culture, or science. Spread \
+across different continents.{avoid_clause}"""
+
 INSIGHTS_PROMPT = """Write the Marsad insights profile for {country_name} ({region}).
 
 Produce:
@@ -143,6 +214,30 @@ class ClaudeClient:
             prompt=INSIGHTS_PROMPT.format(country_name=country_name, region=region or "the world"),
             schema=INSIGHTS_SCHEMA,
         )
+
+    async def generate_culture(self, country_name: str, languages: list[str]) -> dict[str, Any]:
+        """Generate the language & culture card. Raises on budget/API errors."""
+        return await self._generate_json(
+            prompt=CULTURE_PROMPT.format(
+                country_name=country_name, languages=", ".join(languages) or "unknown"
+            ),
+            schema=CULTURE_SCHEMA,
+        )
+
+    async def generate_feed_facts(
+        self, count: int, avoid_countries: list[str]
+    ) -> list[dict[str, Any]]:
+        """Generate a batch of "Did You Know?" facts. Raises on budget/API errors."""
+        avoid_clause = (
+            f" Do NOT use these countries (already covered): {', '.join(avoid_countries)}."
+            if avoid_countries
+            else ""
+        )
+        result = await self._generate_json(
+            prompt=FEED_PROMPT.format(count=count, avoid_clause=avoid_clause),
+            schema=FEED_SCHEMA,
+        )
+        return result["facts"]
 
     async def _generate_json(self, prompt: str, schema: dict[str, Any]) -> dict[str, Any]:
         if not self._settings.anthropic_api_key:

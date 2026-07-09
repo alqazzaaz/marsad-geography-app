@@ -1,20 +1,93 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, DestroyRef, effect, inject, input, output, signal } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  WritableSignal,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 import { STRINGS } from '../../core/i18n/strings';
 import { CountryDetail } from '../../core/models/country.model';
-import { CountryInsights } from '../../core/models/insights.model';
+import {
+  AiContentResponse,
+  CountryCulture,
+  CountryInsights,
+} from '../../core/models/insights.model';
 import { InsightsService } from '../../core/services/insights.service';
 
 const POLL_INTERVAL_MS = 3000;
 const POLL_MAX_ATTEMPTS = 30; // give up after ~90s
 
-type InsightsState = 'idle' | 'generating' | 'ready' | 'limited' | 'error';
+type AiState = 'idle' | 'generating' | 'ready' | 'limited' | 'error';
+
+/** Polling state machine for one kind of AI content (insights / culture). */
+class AiContent<T> {
+  readonly state = signal<AiState>('idle');
+  readonly data: WritableSignal<T | null> = signal(null);
+
+  private timer: ReturnType<typeof setTimeout> | null = null;
+  private attempts = 0;
+
+  constructor(
+    private readonly fetchFn: (code: string) => Observable<AiContentResponse<T>>,
+    private readonly currentCode: () => string | undefined,
+  ) {}
+
+  start(code: string): void {
+    this.reset();
+    this.fetch(code);
+  }
+
+  reset(): void {
+    if (this.timer !== null) {
+      clearTimeout(this.timer);
+      this.timer = null;
+    }
+    this.attempts = 0;
+    this.state.set('idle');
+    this.data.set(null);
+  }
+
+  private fetch(code: string): void {
+    if (this.currentCode() !== code) {
+      return;
+    }
+    this.fetchFn(code).subscribe({
+      next: (res) => {
+        if (this.currentCode() !== code) {
+          return;
+        }
+        if (res.status === 'ready' && res.data) {
+          this.data.set(res.data);
+          this.state.set('ready');
+        } else {
+          this.state.set('generating');
+          if (++this.attempts > POLL_MAX_ATTEMPTS) {
+            this.state.set('error');
+            return;
+          }
+          this.timer = setTimeout(() => this.fetch(code), POLL_INTERVAL_MS);
+        }
+      },
+      error: (err: HttpErrorResponse) => {
+        if (this.currentCode() !== code) {
+          return;
+        }
+        this.state.set(err.status === 429 || err.status === 503 ? 'limited' : 'error');
+      },
+    });
+  }
+}
 
 /**
  * Sliding side panel with a country's hard facts (from countries.dev via the
- * backend cache) and the AI-crafted Marsad insights layer.
+ * backend cache) plus the AI-crafted insights and language & culture layers.
  */
 @Component({
   selector: 'app-country-panel',
@@ -35,66 +108,32 @@ export class CountryPanel {
 
   readonly t = STRINGS.country;
   readonly ti = STRINGS.insights;
+  readonly tc = STRINGS.culture;
 
-  readonly insightsState = signal<InsightsState>('idle');
-  readonly insights = signal<CountryInsights | null>(null);
-
-  private pollTimer: ReturnType<typeof setTimeout> | null = null;
-  private pollAttempts = 0;
+  readonly insights = new AiContent<CountryInsights>(
+    (code) => this.insightsService.getInsights(code),
+    () => this.country()?.alpha2_code,
+  );
+  readonly culture = new AiContent<CountryCulture>(
+    (code) => this.insightsService.getCulture(code),
+    () => this.country()?.alpha2_code,
+  );
 
   constructor() {
     effect(() => {
       const c = this.country();
-      this.stopPolling();
-      this.insights.set(null);
-      this.insightsState.set('idle');
       if (c) {
-        this.pollAttempts = 0;
-        this.fetchInsights(c.alpha2_code);
+        this.insights.start(c.alpha2_code);
+        this.culture.start(c.alpha2_code);
+      } else {
+        this.insights.reset();
+        this.culture.reset();
       }
     });
-    this.destroyRef.onDestroy(() => this.stopPolling());
-  }
-
-  private fetchInsights(code: string): void {
-    if (this.country()?.alpha2_code !== code) {
-      return;
-    }
-    this.insightsService.getInsights(code).subscribe({
-      next: (res) => {
-        if (this.country()?.alpha2_code !== code) {
-          return;
-        }
-        if (res.status === 'ready' && res.data) {
-          this.insights.set(res.data);
-          this.insightsState.set('ready');
-        } else {
-          this.insightsState.set('generating');
-          this.schedulePoll(code);
-        }
-      },
-      error: (err: HttpErrorResponse) => {
-        if (this.country()?.alpha2_code !== code) {
-          return;
-        }
-        this.insightsState.set(err.status === 429 || err.status === 503 ? 'limited' : 'error');
-      },
+    this.destroyRef.onDestroy(() => {
+      this.insights.reset();
+      this.culture.reset();
     });
-  }
-
-  private schedulePoll(code: string): void {
-    if (++this.pollAttempts > POLL_MAX_ATTEMPTS) {
-      this.insightsState.set('error');
-      return;
-    }
-    this.pollTimer = setTimeout(() => this.fetchInsights(code), POLL_INTERVAL_MS);
-  }
-
-  private stopPolling(): void {
-    if (this.pollTimer !== null) {
-      clearTimeout(this.pollTimer);
-      this.pollTimer = null;
-    }
   }
 
   languageList(country: CountryDetail): string {

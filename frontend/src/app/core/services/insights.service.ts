@@ -2,7 +2,11 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { InsightsResponse } from '../models/insights.model';
+import {
+  CultureResponse,
+  FeedResponse,
+  InsightsResponse,
+} from '../models/insights.model';
 
 @Injectable({ providedIn: 'root' })
 export class InsightsService {
@@ -10,5 +14,13 @@ export class InsightsService {
 
   getInsights(code: string): Observable<InsightsResponse> {
     return this.http.get<InsightsResponse>(`/api/countries/${code}/insights`);
+  }
+
+  getCulture(code: string): Observable<CultureResponse> {
+    return this.http.get<CultureResponse>(`/api/countries/${code}/culture`);
+  }
+
+  getFeed(limit = 8): Observable<FeedResponse> {
+    return this.http.get<FeedResponse>(`/api/feed`, { params: { limit } });
   }
 }

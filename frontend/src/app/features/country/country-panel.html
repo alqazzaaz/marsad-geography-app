@@ -70,7 +70,7 @@
         <span class="badge">{{ ti.badge }}</span>
       </header>
 
-      @switch (insightsState()) {
+      @switch (insights.state()) {
         @case ('generating') {
           <div class="insights-wait">
             <div class="spinner small" aria-hidden="true"></div>
@@ -84,7 +84,7 @@
           <p class="insights-note">{{ ti.error }}</p>
         }
         @case ('ready') {
-          @if (insights(); as ins) {
+          @if (insights.data(); as ins) {
             <div class="insight-group">
               <h4>{{ ti.surprisingHistory }}</h4>
               @for (item of ins.surprising_history; track item.title) {
@@ -126,6 +126,75 @@
                 <article class="insight">
                   <h5>{{ gem.name }}</h5>
                   <p>{{ gem.detail }}</p>
+                </article>
+              }
+            </div>
+
+            <p class="insights-disclaimer">{{ ti.disclaimer }}</p>
+          }
+        }
+      }
+    </section>
+
+    <section class="insights culture">
+      <header class="insights-head">
+        <h3>{{ tc.heading }}</h3>
+        <span class="badge">{{ ti.badge }}</span>
+      </header>
+
+      @switch (culture.state()) {
+        @case ('generating') {
+          <div class="insights-wait">
+            <div class="spinner small" aria-hidden="true"></div>
+            <p>{{ tc.generating }}</p>
+          </div>
+        }
+        @case ('limited') {
+          <p class="insights-note">{{ ti.limit }}</p>
+        }
+        @case ('error') {
+          <p class="insights-note">{{ ti.error }}</p>
+        }
+        @case ('ready') {
+          @if (culture.data(); as cul) {
+            <div class="insight-group">
+              <h4>{{ tc.keyPhrases }}</h4>
+              <div class="phrases">
+                @for (phrase of cul.key_phrases; track phrase.meaning) {
+                  <div class="phrase">
+                    <span class="phrase-meaning">{{ phrase.meaning }}</span>
+                    <span class="phrase-local">{{ phrase.local }}</span>
+                    <span class="phrase-say">{{ phrase.pronunciation }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <div class="insight-group dos-donts">
+              <div class="col">
+                <h4 class="ok">{{ tc.dos }}</h4>
+                <ul>
+                  @for (item of cul.dos; track item) {
+                    <li>{{ item }}</li>
+                  }
+                </ul>
+              </div>
+              <div class="col">
+                <h4 class="no">{{ tc.donts }}</h4>
+                <ul>
+                  @for (item of cul.donts; track item) {
+                    <li>{{ item }}</li>
+                  }
+                </ul>
+              </div>
+            </div>
+
+            <div class="insight-group">
+              <h4>{{ tc.etiquette }}</h4>
+              @for (item of cul.etiquette; track item.topic) {
+                <article class="insight">
+                  <h5>{{ item.topic }}</h5>
+                  <p>{{ item.advice }}</p>
                 </article>
               }
             </div>

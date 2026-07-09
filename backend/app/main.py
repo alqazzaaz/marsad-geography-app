@@ -9,7 +9,7 @@ import asyncio
 
 import app.models  # noqa: F401  (register ORM models on Base.metadata)
 from app.api.routes import config as config_route
-from app.api.routes import countries, health, insights
+from app.api.routes import countries, feed, health, insights
 from app.core.config import get_settings
 from app.core.redis import close_redis
 from app.db.session import Base, engine
@@ -52,6 +52,7 @@ app.include_router(health.router, prefix=settings.api_prefix)
 app.include_router(countries.router, prefix=settings.api_prefix)
 app.include_router(config_route.router, prefix=settings.api_prefix)
 app.include_router(insights.router, prefix=settings.api_prefix)
+app.include_router(feed.router, prefix=settings.api_prefix)
 
 
 @app.get("/")

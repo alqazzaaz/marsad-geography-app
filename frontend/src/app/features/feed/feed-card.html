@@ -1,0 +1,39 @@
+@if (!open()) {
+  <button class="feed-pill" type="button" (click)="toggle()">
+    <span class="star" aria-hidden="true">✦</span> {{ t.open }}
+  </button>
+} @else {
+  <div class="feed-card">
+    <header class="feed-head">
+      <h3><span class="star" aria-hidden="true">✦</span> {{ t.heading }}</h3>
+      <button class="icon-btn" type="button" (click)="toggle()" [attr.aria-label]="t.close">✕</button>
+    </header>
+
+    @switch (state()) {
+      @case ('loading') {
+        <div class="feed-wait">
+          <div class="feed-spinner" aria-hidden="true"></div>
+          <p>{{ t.generating }}</p>
+        </div>
+      }
+      @case ('error') {
+        <p class="feed-fact">…</p>
+      }
+      @case ('ready') {
+        @if (current; as fact) {
+          <p class="feed-country">{{ fact.country_name }}</p>
+          <p class="feed-fact">{{ fact.fact }}</p>
+        }
+      }
+    }
+
+    <footer class="feed-actions">
+      <button class="text-btn" type="button" (click)="next()" [disabled]="state() !== 'ready'">
+        {{ t.next }} →
+      </button>
+      <button class="text-btn" type="button" (click)="refresh()" [disabled]="state() === 'loading'">
+        ⟳ {{ t.refresh }}
+      </button>
+    </footer>
+  </div>
+}

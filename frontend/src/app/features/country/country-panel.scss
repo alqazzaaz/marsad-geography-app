@@ -285,3 +285,71 @@
   font-style: italic;
   line-height: 1.5;
 }
+
+/* --- Language & culture card --- */
+.phrases {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.phrase {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    'meaning local'
+    'say local';
+  align-items: baseline;
+  column-gap: 0.8rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid rgba(201, 162, 75, 0.15);
+  border-radius: 8px;
+  background: rgba(201, 162, 75, 0.04);
+
+  .phrase-meaning {
+    grid-area: meaning;
+    color: var(--text-100);
+    font-size: 0.88rem;
+    font-weight: 400;
+  }
+
+  .phrase-local {
+    grid-area: local;
+    color: var(--gold-300);
+    font-size: 1.05rem;
+    text-align: right;
+  }
+
+  .phrase-say {
+    grid-area: say;
+    color: var(--text-500);
+    font-size: 0.75rem;
+    font-style: italic;
+  }
+}
+
+.dos-donts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+
+  h4.ok {
+    color: #8fbf7f;
+  }
+  h4.no {
+    color: #c96b5f;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 1rem;
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  li {
+    color: var(--text-300);
+    font-size: 0.83rem;
+    line-height: 1.45;
+    font-weight: 300;
+  }
+}

@@ -1,13 +1,13 @@
-"""AI insight endpoints.
+"""AI content endpoints (insights + language & culture card).
 
-GET /countries/{code}/insights
+GET /countries/{code}/insights | /countries/{code}/culture
   200 {status: "ready", data, generated_at}   — served from cache
   202 {status: "generating"}                  — job queued or in flight; poll again
   429                                         — per-IP daily AI quota exceeded
   503                                         — daily Claude budget reached
 
 Rate limiting and the budget guard only apply when generation would actually
-be triggered — cached insights are always served freely.
+be triggered — cached content is always served freely.
 """
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Request, Response
@@ -19,22 +19,20 @@ from app.db.session import get_db
 from app.services.claude_client import ClaudeClient
 from app.services.countries_client import CountriesAPIError, CountryNotFoundError
 from app.services.country_service import CountryService
-from app.services.insights_service import KIND_INSIGHTS, InsightsService
+from app.services.insights_service import KIND_CULTURE, KIND_INSIGHTS, InsightsService
 
 router = APIRouter(prefix="/countries", tags=["insights"])
 
+CODE_PATH = Path(min_length=2, max_length=3, pattern=r"^[A-Za-z]+$")
 
-@router.get("/{code}/insights")
-async def get_country_insights(
-    request: Request,
-    response: Response,
-    code: str = Path(min_length=2, max_length=3, pattern=r"^[A-Za-z]+$"),
-    db: AsyncSession = Depends(get_db),
+
+async def _serve_ai_content(
+    kind: str, code: str, request: Request, response: Response, db: AsyncSession
 ) -> dict:
     cache = get_redis()
     service = InsightsService(db, cache)
 
-    # Insights are keyed by alpha-2; resolve alpha-3 lookups through the
+    # AI content is keyed by alpha-2; resolve alpha-3 lookups through the
     # (cached) country layer, which also 404s unknown codes.
     try:
         raw, _ = await CountryService(db, cache).get_country(code)
@@ -44,11 +42,11 @@ async def get_country_insights(
         raise HTTPException(status_code=502, detail=str(exc)) from exc
     alpha2 = raw["alpha2Code"]
 
-    cached = await service.get_cached(alpha2, KIND_INSIGHTS)
+    cached = await service.get_cached(alpha2, kind)
     if cached is not None:
         return {"status": "ready", **cached}
 
-    if await service.is_generating(alpha2, KIND_INSIGHTS):
+    if await service.is_generating(alpha2, kind):
         response.status_code = 202
         return {"status": "generating"}
 
@@ -65,6 +63,26 @@ async def get_country_insights(
             detail="You have reached today's limit for new AI insights. Try again tomorrow.",
         )
 
-    await service.request_generation(alpha2, KIND_INSIGHTS)
+    await service.request_generation(alpha2, kind)
     response.status_code = 202
     return {"status": "generating"}
+
+
+@router.get("/{code}/insights")
+async def get_country_insights(
+    request: Request,
+    response: Response,
+    code: str = CODE_PATH,
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    return await _serve_ai_content(KIND_INSIGHTS, code, request, response, db)
+
+
+@router.get("/{code}/culture")
+async def get_country_culture(
+    request: Request,
+    response: Response,
+    code: str = CODE_PATH,
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    return await _serve_ai_content(KIND_CULTURE, code, request, response, db)

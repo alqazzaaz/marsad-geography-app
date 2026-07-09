@@ -47,4 +47,20 @@ export const STRINGS = {
     lesserKnown: 'worth knowing',
     disclaimer: 'Insights are AI-generated interpretations — hard facts above come from verified data.',
   },
+  culture: {
+    heading: 'Language & Culture',
+    generating: 'The observatory is preparing this country’s culture card…',
+    keyPhrases: 'Key Phrases',
+    dos: 'Do',
+    donts: 'Don’t',
+    etiquette: 'Know Before You Go',
+  },
+  feed: {
+    heading: 'Did you know?',
+    generating: 'The observatory is gathering surprising facts…',
+    next: 'Next fact',
+    refresh: 'New facts',
+    open: 'Did you know?',
+    close: 'Close feed',
+  },
 } as const;

@@ -14,6 +14,7 @@ import { CountryDetail } from '../../core/models/country.model';
 import { ConfigService } from '../../core/services/config.service';
 import { CountryService } from '../../core/services/country.service';
 import { CountryPanel } from '../country/country-panel';
+import { FeedCard } from '../feed/feed-card';
 
 const COUNTRY_SOURCE = 'country-boundaries';
 const COUNTRY_SOURCE_LAYER = 'country_boundaries';
@@ -29,7 +30,7 @@ const WORLDVIEW_FILTER: mapboxgl.FilterSpecification = [
 
 @Component({
   selector: 'app-map-page',
-  imports: [CountryPanel],
+  imports: [CountryPanel, FeedCard],
   templateUrl: './map-page.html',
   styleUrl: './map-page.scss',
 })

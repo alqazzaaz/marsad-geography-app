@@ -29,6 +29,7 @@ PENDING_KEY = "insights:pending:{kind}:{code}"
 PENDING_TTL = 180  # seconds — lock expires if the worker dies mid-generation
 
 KIND_INSIGHTS = "insights"
+KIND_CULTURE = "culture"
 
 
 class InsightsService:

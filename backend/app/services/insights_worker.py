@@ -13,7 +13,13 @@ from app.core.redis import get_redis
 from app.db.session import async_session_factory
 from app.services.claude_client import BudgetExceededError, ClaudeClient, ClaudeGenerationError
 from app.services.country_service import CountryService
-from app.services.insights_service import JOBS_CHANNEL, KIND_INSIGHTS, InsightsService
+from app.services.feed_service import BATCH_SIZE, KIND_FEED, FeedService
+from app.services.insights_service import (
+    JOBS_CHANNEL,
+    KIND_CULTURE,
+    KIND_INSIGHTS,
+    InsightsService,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -46,6 +52,14 @@ async def _process_job(code: str, kind: str) -> None:
     async with async_session_factory() as db:
         service = InsightsService(db, cache)
         try:
+            if kind == KIND_FEED:
+                feed = FeedService(db, cache)
+                avoid = await feed.covered_countries()
+                facts = await claude.generate_feed_facts(BATCH_SIZE, avoid)
+                await feed.store_facts(facts)
+                logger.info("Added %d feed facts", len(facts))
+                return
+
             # Someone may have generated it between enqueue and pickup.
             if await service.get_cached(code, kind) is not None:
                 return
@@ -56,6 +70,11 @@ async def _process_job(code: str, kind: str) -> None:
 
             if kind == KIND_INSIGHTS:
                 data = await claude.generate_insights(name, region)
+            elif kind == KIND_CULTURE:
+                languages = [
+                    lang.get("name", "") for lang in raw_country.get("languages") or []
+                ]
+                data = await claude.generate_culture(name, languages)
             else:
                 logger.error("Unknown insight kind: %s", kind)
                 return
