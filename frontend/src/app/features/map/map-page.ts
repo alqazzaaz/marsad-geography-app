@@ -22,13 +22,27 @@ const COUNTRY_SOURCE = 'country-boundaries';
 const COUNTRY_SOURCE_LAYER = 'country_boundaries';
 const FILL_LAYER = 'marsad-country-fills';
 const LINE_LAYER = 'marsad-country-lines';
+const PROMOTED_LABEL_SOURCE = 'marsad-promoted-labels';
+const PROMOTED_LABEL_LAYER = 'marsad-promoted-label-layer';
 
-/** Undisputed polygons visible in the "all"/US worldview (avoids duplicates). */
-const WORLDVIEW_FILTER: mapboxgl.FilterSpecification = [
-  'all',
-  ['==', ['get', 'disputed'], 'false'],
-  ['any', ['==', ['get', 'worldview'], 'all'], ['in', 'US', ['get', 'worldview']]],
-];
+/**
+ * Which polygons are interactive, honoring the configurable worldview:
+ * undisputed polygons in the "all"/US worldview, PLUS disputed polygons of
+ * promoted countries, MINUS excluded countries entirely.
+ */
+function countryFilter(excluded: string[], promoted: string[]): mapboxgl.FilterSpecification {
+  return [
+    'all',
+    [
+      'any',
+      ['==', ['get', 'disputed'], 'false'],
+      ['in', ['get', 'iso_3166_1'], ['literal', promoted]],
+    ],
+    ['any', ['==', ['get', 'worldview'], 'all'], ['in', 'US', ['get', 'worldview']]],
+    ['!', ['in', ['get', 'iso_3166_1'], ['literal', excluded]]],
+    ['!', ['in', ['get', 'iso_3166_1_alpha_3'], ['literal', excluded]]],
+  ] as mapboxgl.FilterSpecification;
+}
 
 @Component({
   selector: 'app-map-page',
@@ -46,6 +60,8 @@ export class MapPage implements AfterViewInit, OnDestroy {
   private map: mapboxgl.Map | null = null;
   private hoveredCountryId: string | number | null = null;
   private styleLoaded = false;
+  excluded: string[] = [];
+  private promoted: string[] = [];
 
   readonly t = STRINGS;
 
@@ -60,12 +76,14 @@ export class MapPage implements AfterViewInit, OnDestroy {
 
   async ngAfterViewInit(): Promise<void> {
     try {
-      const { mapbox_token } = await this.configService.load();
-      if (!mapbox_token) {
+      const config = await this.configService.load();
+      if (!config.mapbox_token) {
         this.tokenMissing.set(true);
         return;
       }
-      this.initMap(mapbox_token);
+      this.excluded = config.map_excluded ?? [];
+      this.promoted = config.map_promoted ?? [];
+      this.initMap(config.mapbox_token);
     } catch {
       this.mapError.set(true);
     }
@@ -88,6 +106,9 @@ export class MapPage implements AfterViewInit, OnDestroy {
   }
 
   selectCountry(code: string): void {
+    if (this.excluded.includes(code.toUpperCase())) {
+      return;
+    }
     this.dismissWelcome();
     this.panelOpen.set(true);
     this.countryLoading.set(true);
@@ -164,10 +185,14 @@ export class MapPage implements AfterViewInit, OnDestroy {
     // First interaction with the globe dissolves the welcome overlay.
     this.map.once('mousedown', () => this.dismissWelcome());
     this.map.once('touchstart', () => this.dismissWelcome());
+
+    // Exposed for E2E tests / debugging.
+    (window as unknown as { __marsadMap?: mapboxgl.Map }).__marsadMap = this.map;
   }
 
   private addCountryLayers(): void {
     const map = this.map!;
+    const filter = countryFilter(this.excluded, this.promoted);
 
     map.addSource(COUNTRY_SOURCE, {
       type: 'vector',
@@ -179,7 +204,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
       type: 'fill',
       source: COUNTRY_SOURCE,
       'source-layer': COUNTRY_SOURCE_LAYER,
-      filter: WORLDVIEW_FILTER,
+      filter,
       paint: {
         'fill-color': '#c9a24b',
         'fill-opacity': [
@@ -196,12 +221,15 @@ export class MapPage implements AfterViewInit, OnDestroy {
       type: 'line',
       source: COUNTRY_SOURCE,
       'source-layer': COUNTRY_SOURCE_LAYER,
-      filter: WORLDVIEW_FILTER,
+      filter,
       paint: {
         'line-color': 'rgba(201, 162, 75, 0.35)',
         'line-width': 0.6,
       },
     });
+
+    this.applyWorldviewToBaseLabels();
+    void this.addPromotedLabels();
 
     map.on('mousemove', FILL_LAYER, (event) => {
       const feature = event.features?.[0];
@@ -222,6 +250,91 @@ export class MapPage implements AfterViewInit, OnDestroy {
       if (typeof code === 'string' && code.length === 2) {
         this.selectCountry(code);
       }
+    });
+  }
+
+  /** Hide the base style's name labels for excluded countries. */
+  private applyWorldviewToBaseLabels(): void {
+    if (this.excluded.length === 0) {
+      return;
+    }
+    const map = this.map!;
+    for (const layerId of ['country-label', 'country-boundaries']) {
+      if (!map.getLayer(layerId)) {
+        continue;
+      }
+      const existing = map.getFilter(layerId);
+      const exclusion: mapboxgl.ExpressionSpecification = [
+        '!',
+        ['in', ['coalesce', ['get', 'iso_3166_1'], ''], ['literal', this.excluded]],
+      ];
+      map.setFilter(
+        layerId,
+        existing ? (['all', existing, exclusion] as mapboxgl.FilterSpecification) : exclusion,
+      );
+    }
+  }
+
+  /** Add Marsad's own labels for promoted countries (name from our API). */
+  private async addPromotedLabels(): Promise<void> {
+    const alpha2 = this.promoted.filter((code) => code.length === 2);
+    if (alpha2.length === 0 || !this.map) {
+      return;
+    }
+
+    const features = await Promise.all(
+      alpha2.map(async (code) => {
+        try {
+          const detail = await new Promise<CountryDetail>((resolve, reject) =>
+            this.countryService.getCountry(code).subscribe({ next: resolve, error: reject }),
+          );
+          if (!detail.latlng || detail.latlng.length !== 2) {
+            return null;
+          }
+          // Use the short common name (before any comma, e.g. "Palestine,
+          // State of" -> "Palestine").
+          const name = detail.name.split(',')[0].trim();
+          return {
+            type: 'Feature' as const,
+            properties: { name },
+            geometry: {
+              type: 'Point' as const,
+              coordinates: [detail.latlng[1], detail.latlng[0]],
+            },
+          };
+        } catch {
+          return null;
+        }
+      }),
+    );
+
+    const map = this.map;
+    if (!map || !this.styleLoaded) {
+      return;
+    }
+    map.addSource(PROMOTED_LABEL_SOURCE, {
+      type: 'geojson',
+      data: {
+        type: 'FeatureCollection',
+        features: features.filter((f): f is NonNullable<typeof f> => f !== null),
+      },
+    });
+    map.addLayer({
+      id: PROMOTED_LABEL_LAYER,
+      type: 'symbol',
+      source: PROMOTED_LABEL_SOURCE,
+      minzoom: 3,
+      layout: {
+        'text-field': ['get', 'name'],
+        'text-font': ['DIN Pro Medium', 'Arial Unicode MS Regular'],
+        'text-size': ['interpolate', ['linear'], ['zoom'], 3, 11, 7, 20],
+        'text-transform': 'none',
+      },
+      paint: {
+        'text-color': 'rgb(146, 154, 170)',
+        'text-halo-color': 'rgba(7, 10, 16, 0.85)',
+        'text-halo-width': 1.2,
+      },
     });
   }
 

@@ -106,6 +106,8 @@ export class CountryPanel {
   readonly country = input<CountryDetail | null>(null);
   readonly loading = input(false);
   readonly error = input(false);
+  /** ISO codes excluded from the map worldview — hidden from border chips. */
+  readonly excludedCodes = input<string[]>([]);
 
   readonly closed = output<void>();
   readonly borderSelected = output<string>();
@@ -206,6 +208,10 @@ export class CountryPanel {
     this.chatStreaming.set(false);
     this.chatError.set(null);
     this.question = '';
+  }
+
+  visibleBorders(country: CountryDetail): string[] {
+    return country.borders.filter((code) => !this.excludedCodes().includes(code.toUpperCase()));
   }
 
   languageList(country: CountryDetail): string {

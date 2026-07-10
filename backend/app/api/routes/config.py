@@ -14,4 +14,8 @@ router = APIRouter(tags=["config"])
 @router.get("/config")
 async def get_client_config() -> dict:
     settings = get_settings()
-    return {"mapbox_token": settings.mapbox_access_token}
+    return {
+        "mapbox_token": settings.mapbox_access_token,
+        "map_excluded": settings.map_excluded_list,
+        "map_promoted": settings.map_promoted_list,
+    }

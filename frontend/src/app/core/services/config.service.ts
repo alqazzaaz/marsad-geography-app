@@ -2,8 +2,12 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 
-interface ClientConfig {
+export interface ClientConfig {
   mapbox_token: string;
+  /** ISO codes (alpha-2 + alpha-3) removed from map interactivity and labels. */
+  map_excluded: string[];
+  /** ISO codes made clickable even on disputed territory, with a custom label. */
+  map_promoted: string[];
 }
 
 @Injectable({ providedIn: 'root' })

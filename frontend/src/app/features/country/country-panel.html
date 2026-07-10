@@ -51,11 +51,11 @@
       }
     </dl>
 
-    @if (c.borders.length) {
+    @if (visibleBorders(c).length) {
       <section class="borders">
         <h3>{{ t.borders }}</h3>
         <div class="chips">
-          @for (border of c.borders; track border) {
+          @for (border of visibleBorders(c); track border) {
             <button class="chip" type="button" (click)="borderSelected.emit(border)">
               {{ border }}
             </button>

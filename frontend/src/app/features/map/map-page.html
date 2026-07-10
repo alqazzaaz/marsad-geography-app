@@ -59,6 +59,7 @@
       [country]="country()"
       [loading]="countryLoading()"
       [error]="countryError()"
+      [excludedCodes]="excluded"
       (closed)="closePanel()"
       (borderSelected)="selectCountry($event)"
     />

@@ -37,6 +37,22 @@ class Settings(BaseSettings):
     anthropic_api_key: str = ""
     mapbox_access_token: str = ""
 
+    # --- Map worldview (comma-separated ISO codes; list BOTH alpha-2 and
+    # alpha-3 forms, e.g. "IL,ISR"). Excluded countries are removed from map
+    # interactivity and labels; promoted countries are made clickable even
+    # where the base cartography marks their territory as disputed, and get
+    # a custom label.
+    map_excluded_countries: str = ""
+    map_promoted_countries: str = ""
+
+    @property
+    def map_excluded_list(self) -> list[str]:
+        return [c.strip().upper() for c in self.map_excluded_countries.split(",") if c.strip()]
+
+    @property
+    def map_promoted_list(self) -> list[str]:
+        return [c.strip().upper() for c in self.map_promoted_countries.split(",") if c.strip()]
+
     # --- Caching (country hard facts) ---
     country_cache_ttl_seconds: int = 86400  # Redis TTL: 24h
     country_refresh_days: int = 30  # PostgreSQL rows older than this are re-fetched
