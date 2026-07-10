@@ -21,6 +21,9 @@ venv/
 # --- Scratch / debug ---
 error.txt
 
+# --- Prompts ---
+prompt.txt
+
 # --- IDE / OS ---
 .vscode/
 .idea/

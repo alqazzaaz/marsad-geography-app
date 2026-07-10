@@ -327,6 +327,112 @@
   }
 }
 
+/* --- Ask the Observatory (country Q&A) --- */
+.chat-log {
+  display: grid;
+  gap: 0.7rem;
+  margin-bottom: 1rem;
+}
+
+.chat-message {
+  max-width: 92%;
+  padding: 0.6rem 0.85rem;
+  border-radius: 12px;
+  border: 1px solid rgba(201, 162, 75, 0.15);
+  background: rgba(201, 162, 75, 0.04);
+  color: var(--text-100);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  font-weight: 300;
+  white-space: pre-wrap;
+  justify-self: start;
+  border-bottom-left-radius: 3px;
+
+  &.from-user {
+    justify-self: end;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 3px;
+    border-color: rgba(201, 162, 75, 0.4);
+    background: rgba(201, 162, 75, 0.12);
+    color: var(--gold-300);
+  }
+}
+
+.chat-thinking {
+  margin: 0;
+  color: var(--text-500);
+  font-size: 0.78rem;
+  font-style: italic;
+  animation: chat-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes chat-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.chat-error {
+  margin-bottom: 0.8rem;
+}
+
+.chat-form {
+  display: flex;
+  gap: 0.5rem;
+
+  input {
+    flex: 1;
+    min-width: 0;
+    padding: 0.6rem 0.85rem;
+    border: 1px solid var(--ink-600);
+    border-radius: 999px;
+    background: rgba(7, 10, 16, 0.6);
+    color: var(--text-100);
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    transition: border-color 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: var(--gold-400);
+    }
+
+    &::placeholder {
+      color: var(--text-500);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+    }
+  }
+
+  button {
+    padding: 0.6rem 1.2rem;
+    border: 1px solid rgba(201, 162, 75, 0.5);
+    border-radius: 999px;
+    background: rgba(201, 162, 75, 0.1);
+    color: var(--gold-300);
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s ease;
+
+    &:hover:not(:disabled) {
+      background: rgba(201, 162, 75, 0.2);
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+  }
+}
+
 .dos-donts {
   display: grid;
   grid-template-columns: 1fr 1fr;

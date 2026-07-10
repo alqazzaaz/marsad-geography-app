@@ -12,6 +12,8 @@ import {
 import { HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { FormsModule } from '@angular/forms';
+
 import { STRINGS } from '../../core/i18n/strings';
 import { CountryDetail } from '../../core/models/country.model';
 import {
@@ -19,6 +21,7 @@ import {
   CountryCulture,
   CountryInsights,
 } from '../../core/models/insights.model';
+import { AskHistoryMessage, AskService } from '../../core/services/ask.service';
 import { InsightsService } from '../../core/services/insights.service';
 
 const POLL_INTERVAL_MS = 3000;
@@ -91,12 +94,13 @@ class AiContent<T> {
  */
 @Component({
   selector: 'app-country-panel',
-  imports: [DecimalPipe],
+  imports: [DecimalPipe, FormsModule],
   templateUrl: './country-panel.html',
   styleUrl: './country-panel.scss',
 })
 export class CountryPanel {
   private readonly insightsService = inject(InsightsService);
+  private readonly askService = inject(AskService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly country = input<CountryDetail | null>(null);
@@ -109,6 +113,14 @@ export class CountryPanel {
   readonly t = STRINGS.country;
   readonly ti = STRINGS.insights;
   readonly tc = STRINGS.culture;
+  readonly ta = STRINGS.ask;
+
+  // --- Country Q&A chat ---
+  readonly chat = signal<AskHistoryMessage[]>([]);
+  readonly chatStreaming = signal(false);
+  readonly chatError = signal<string | null>(null);
+  question = '';
+  private askAbort: AbortController | null = null;
 
   readonly insights = new AiContent<CountryInsights>(
     (code) => this.insightsService.getInsights(code),
@@ -122,6 +134,7 @@ export class CountryPanel {
   constructor() {
     effect(() => {
       const c = this.country();
+      this.resetChat();
       if (c) {
         this.insights.start(c.alpha2_code);
         this.culture.start(c.alpha2_code);
@@ -133,7 +146,66 @@ export class CountryPanel {
     this.destroyRef.onDestroy(() => {
       this.insights.reset();
       this.culture.reset();
+      this.askAbort?.abort();
     });
+  }
+
+  askQuestion(): void {
+    const code = this.country()?.alpha2_code;
+    const question = this.question.trim();
+    if (!code || !question || this.chatStreaming()) {
+      return;
+    }
+
+    this.question = '';
+    this.chatError.set(null);
+    // History sent to the API excludes the new question and empty drafts.
+    const history = this.chat().filter((m) => m.content.trim().length > 0);
+
+    this.chat.update((log) => [
+      ...log,
+      { role: 'user', content: question },
+      { role: 'assistant', content: '' },
+    ]);
+    this.chatStreaming.set(true);
+
+    this.askAbort = new AbortController();
+    void this.askService.ask(
+      code,
+      question,
+      history.slice(-6),
+      {
+        onChunk: (text) => {
+          this.chat.update((log) => {
+            const updated = [...log];
+            const last = updated[updated.length - 1];
+            updated[updated.length - 1] = { ...last, content: last.content + text };
+            return updated;
+          });
+        },
+        onDone: () => this.chatStreaming.set(false),
+        onError: (message, status) => {
+          this.chatStreaming.set(false);
+          // Drop the empty assistant placeholder.
+          this.chat.update((log) =>
+            log[log.length - 1]?.content === '' ? log.slice(0, -1) : log,
+          );
+          this.chatError.set(
+            status === 429 || status === 503 ? this.ta.limit : message || this.ta.error,
+          );
+        },
+      },
+      this.askAbort.signal,
+    );
+  }
+
+  private resetChat(): void {
+    this.askAbort?.abort();
+    this.askAbort = null;
+    this.chat.set([]);
+    this.chatStreaming.set(false);
+    this.chatError.set(null);
+    this.question = '';
   }
 
   languageList(country: CountryDetail): string {

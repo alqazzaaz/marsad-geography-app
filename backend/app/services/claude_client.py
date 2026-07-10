@@ -9,6 +9,7 @@ insights_service.py.
 
 import json
 import logging
+from collections.abc import AsyncIterator
 from datetime import datetime, timezone
 from typing import Any
 
@@ -238,6 +239,30 @@ class ClaudeClient:
             schema=FEED_SCHEMA,
         )
         return result["facts"]
+
+    async def stream_answer(
+        self, system: str, messages: list[dict[str, str]], max_tokens: int = 1024
+    ) -> AsyncIterator[str]:
+        """Stream a free-text answer (country Q&A). Applies the budget guard."""
+        if not self._settings.anthropic_api_key:
+            raise ClaudeGenerationError("ANTHROPIC_API_KEY is not configured")
+        if not await self.budget_available():
+            raise BudgetExceededError("Daily Claude budget reached")
+
+        try:
+            async with self._client.messages.stream(
+                model=self._settings.anthropic_model,
+                max_tokens=max_tokens,
+                system=system,
+                messages=messages,
+            ) as stream:
+                async for text in stream.text_stream:
+                    yield text
+                final = await stream.get_final_message()
+        except anthropic.APIError as exc:
+            raise ClaudeGenerationError(f"Claude API error: {exc}") from exc
+
+        await self._record_spend(final.usage.input_tokens, final.usage.output_tokens)
 
     async def _generate_json(self, prompt: str, schema: dict[str, Any]) -> dict[str, Any]:
         if not self._settings.anthropic_api_key:

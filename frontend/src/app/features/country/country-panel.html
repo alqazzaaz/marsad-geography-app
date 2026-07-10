@@ -204,5 +204,47 @@
         }
       }
     </section>
+
+    <section class="insights ask">
+      <header class="insights-head">
+        <h3>{{ ta.heading }}</h3>
+        <span class="badge">{{ ti.badge }}</span>
+      </header>
+
+      @if (chat().length > 0) {
+        <div class="chat-log">
+          @for (message of chat(); track $index) {
+            @if (message.content || message.role === 'user') {
+              <div class="chat-message" [class.from-user]="message.role === 'user'">
+                {{ message.content }}
+              </div>
+            }
+          }
+          @if (chatStreaming()) {
+            <p class="chat-thinking">{{ ta.thinking }}</p>
+          }
+        </div>
+      }
+
+      @if (chatError(); as message) {
+        <p class="insights-note chat-error">{{ message }}</p>
+      }
+
+      <form class="chat-form" (ngSubmit)="askQuestion()">
+        <input
+          name="question"
+          type="text"
+          maxlength="500"
+          [placeholder]="ta.placeholder"
+          [(ngModel)]="question"
+          [disabled]="chatStreaming()"
+          autocomplete="off"
+        />
+        <button type="submit" [disabled]="chatStreaming() || !question.trim()">
+          {{ ta.send }}
+        </button>
+      </form>
+      <p class="insights-disclaimer">{{ ta.disclaimer }}</p>
+    </section>
   }
 </aside>

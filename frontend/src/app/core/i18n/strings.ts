@@ -47,6 +47,15 @@ export const STRINGS = {
     lesserKnown: 'worth knowing',
     disclaimer: 'Insights are AI-generated interpretations — hard facts above come from verified data.',
   },
+  ask: {
+    heading: 'Ask the Observatory',
+    placeholder: 'Ask anything about this country…',
+    send: 'Ask',
+    thinking: 'The observatory is thinking…',
+    limit: 'You have reached today’s limit for questions — try again tomorrow.',
+    error: 'The observatory could not answer. Please try again.',
+    disclaimer: 'Answers are AI-generated — verify important details independently.',
+  },
   culture: {
     heading: 'Language & Culture',
     generating: 'The observatory is preparing this country’s culture card…',
