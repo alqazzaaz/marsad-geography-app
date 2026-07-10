@@ -19,7 +19,12 @@ from app.db.session import get_db
 from app.services.claude_client import ClaudeClient
 from app.services.countries_client import CountriesAPIError, CountryNotFoundError
 from app.services.country_service import CountryService
-from app.services.insights_service import KIND_CULTURE, KIND_INSIGHTS, InsightsService
+from app.services.insights_service import (
+    KIND_CULTURE,
+    KIND_EMBLEMS,
+    KIND_INSIGHTS,
+    InsightsService,
+)
 
 router = APIRouter(prefix="/countries", tags=["insights"])
 
@@ -86,3 +91,13 @@ async def get_country_culture(
     db: AsyncSession = Depends(get_db),
 ) -> dict:
     return await _serve_ai_content(KIND_CULTURE, code, request, response, db)
+
+
+@router.get("/{code}/emblems")
+async def get_country_emblems(
+    request: Request,
+    response: Response,
+    code: str = CODE_PATH,
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    return await _serve_ai_content(KIND_EMBLEMS, code, request, response, db)

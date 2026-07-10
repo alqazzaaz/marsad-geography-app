@@ -30,6 +30,7 @@ PENDING_TTL = 180  # seconds — lock expires if the worker dies mid-generation
 
 KIND_INSIGHTS = "insights"
 KIND_CULTURE = "culture"
+KIND_EMBLEMS = "emblems"
 
 
 class InsightsService:

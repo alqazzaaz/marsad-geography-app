@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 
 import {
   CultureResponse,
+  EmblemsResponse,
   FeedResponse,
   InsightsResponse,
 } from '../models/insights.model';
@@ -18,6 +19,10 @@ export class InsightsService {
 
   getCulture(code: string): Observable<CultureResponse> {
     return this.http.get<CultureResponse>(`/api/countries/${code}/culture`);
+  }
+
+  getEmblems(code: string): Observable<EmblemsResponse> {
+    return this.http.get<EmblemsResponse>(`/api/countries/${code}/emblems`);
   }
 
   getFeed(limit = 8): Observable<FeedResponse> {

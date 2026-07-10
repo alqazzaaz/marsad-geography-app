@@ -12,6 +12,16 @@
     </div>
   } @else if (country(); as c) {
     <header class="head">
+      @if (silhouette(); as s) {
+        <svg
+          class="silhouette"
+          [attr.viewBox]="s.viewBox"
+          preserveAspectRatio="xMidYMid meet"
+          aria-hidden="true"
+        >
+          <path [attr.d]="s.path" />
+        </svg>
+      }
       @if (c.flag_png) {
         <img class="flag" [src]="c.flag_png" [alt]="c.name + ' flag'" />
       }
@@ -131,6 +141,46 @@
             </div>
 
             <p class="insights-disclaimer">{{ ti.disclaimer }}</p>
+          }
+        }
+      }
+    </section>
+
+    <section class="insights emblems">
+      <header class="insights-head">
+        <h3>{{ te.heading }}</h3>
+        <span class="badge">{{ ti.badge }}</span>
+      </header>
+
+      @switch (emblems.state()) {
+        @case ('generating') {
+          <div class="insights-wait">
+            <div class="spinner small" aria-hidden="true"></div>
+            <p>{{ te.generating }}</p>
+          </div>
+        }
+        @case ('limited') {
+          <p class="insights-note">{{ ti.limit }}</p>
+        }
+        @case ('error') {
+          <p class="insights-note">{{ ti.error }}</p>
+        }
+        @case ('ready') {
+          @if (emblems.data(); as em) {
+            <div class="emblem-grid">
+              @for (emblem of em.emblems; track emblem.name) {
+                <article class="emblem">
+                  <p class="emblem-category">{{ emblem.category }}</p>
+                  <h5 class="emblem-name">
+                    {{ emblem.name }}
+                    @if (emblem.local_name && emblem.local_name !== emblem.name) {
+                      <span class="emblem-local">{{ emblem.local_name }}</span>
+                    }
+                  </h5>
+                  <p class="emblem-desc">{{ emblem.description }}</p>
+                </article>
+              }
+            </div>
           }
         }
       }

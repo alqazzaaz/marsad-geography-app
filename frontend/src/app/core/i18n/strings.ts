@@ -59,6 +59,10 @@ export const STRINGS = {
     error: 'The observatory could not answer. Please try again.',
     disclaimer: 'Answers are AI-generated — verify important details independently.',
   },
+  emblems: {
+    heading: 'Cultural Emblems',
+    generating: 'The observatory is gathering this country’s emblems…',
+  },
   culture: {
     heading: 'Language & Culture',
     generating: 'The observatory is preparing this country’s culture card…',

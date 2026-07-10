@@ -29,3 +29,6 @@ prompt.txt
 .idea/
 .DS_Store
 Thumbs.db
+
+# --- Design exploration (local only) ---
+design-alternatives/

@@ -19,10 +19,12 @@ import { CountryDetail } from '../../core/models/country.model';
 import {
   AiContentResponse,
   CountryCulture,
+  CountryEmblems,
   CountryInsights,
 } from '../../core/models/insights.model';
 import { AskHistoryMessage, AskService } from '../../core/services/ask.service';
 import { InsightsService } from '../../core/services/insights.service';
+import { Silhouette, SilhouetteService } from '../../core/services/silhouette.service';
 
 const POLL_INTERVAL_MS = 3000;
 const POLL_MAX_ATTEMPTS = 30; // give up after ~90s
@@ -101,6 +103,7 @@ class AiContent<T> {
 export class CountryPanel {
   private readonly insightsService = inject(InsightsService);
   private readonly askService = inject(AskService);
+  private readonly silhouetteService = inject(SilhouetteService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly country = input<CountryDetail | null>(null);
@@ -116,6 +119,7 @@ export class CountryPanel {
   readonly ti = STRINGS.insights;
   readonly tc = STRINGS.culture;
   readonly ta = STRINGS.ask;
+  readonly te = STRINGS.emblems;
 
   // --- Country Q&A chat ---
   readonly chat = signal<AskHistoryMessage[]>([]);
@@ -132,22 +136,37 @@ export class CountryPanel {
     (code) => this.insightsService.getCulture(code),
     () => this.country()?.alpha2_code,
   );
+  readonly emblems = new AiContent<CountryEmblems>(
+    (code) => this.insightsService.getEmblems(code),
+    () => this.country()?.alpha2_code,
+  );
+
+  readonly silhouette = signal<Silhouette | null>(null);
 
   constructor() {
     effect(() => {
       const c = this.country();
       this.resetChat();
+      this.silhouette.set(null);
       if (c) {
         this.insights.start(c.alpha2_code);
         this.culture.start(c.alpha2_code);
+        this.emblems.start(c.alpha2_code);
+        void this.silhouetteService.getSilhouette(c.alpha3_code).then((s) => {
+          if (this.country()?.alpha3_code === c.alpha3_code) {
+            this.silhouette.set(s);
+          }
+        });
       } else {
         this.insights.reset();
         this.culture.reset();
+        this.emblems.reset();
       }
     });
     this.destroyRef.onDestroy(() => {
       this.insights.reset();
       this.culture.reset();
+      this.emblems.reset();
       this.askAbort?.abort();
     });
   }

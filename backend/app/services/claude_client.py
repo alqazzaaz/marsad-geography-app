@@ -138,6 +138,40 @@ pronunciation (simple phonetic spelling an English speaker can read aloud).
 - etiquette: 4 practical briefings, one each on the topics "Tipping", "Dress code", \
 "Greetings", and "Dining" — concrete, locally accurate advice, not generic travel tips."""
 
+EMBLEMS_SCHEMA: dict[str, Any] = {
+    "type": "object",
+    "properties": {
+        "emblems": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {"type": "string"},
+                    "local_name": {"type": "string"},
+                    "category": {
+                        "type": "string",
+                        "enum": ["Attire", "Cuisine", "Music & Dance", "Symbol", "Craft", "Tradition"],
+                    },
+                    "description": {"type": "string"},
+                },
+                "required": ["name", "local_name", "category", "description"],
+                "additionalProperties": False,
+            },
+        },
+    },
+    "required": ["emblems"],
+    "additionalProperties": False,
+}
+
+EMBLEMS_PROMPT = """List 4 cultural emblems of {country_name} ({region}) — tangible, iconic \
+things locals recognize instantly as their own: a garment, a dish, an instrument or dance, \
+a national symbol, a craft, or a living tradition. Choose across different categories.
+
+For each: name (in English), local_name (in the local language/script; repeat the name if \
+identical), category, and a description of 1–2 sharp sentences saying what it is and why it \
+matters. No generic items that could belong to any country in the region — pick things with \
+a genuinely {country_name} identity where possible."""
+
 FEED_SCHEMA: dict[str, Any] = {
     "type": "object",
     "properties": {
@@ -229,6 +263,16 @@ class ClaudeClient:
                 country_name=country_name, languages=", ".join(languages) or "unknown"
             ),
             schema=CULTURE_SCHEMA,
+        )
+
+    async def generate_emblems(self, country_name: str, region: str | None) -> dict[str, Any]:
+        """Generate the cultural emblems card. Raises on budget/API errors."""
+        return await self._generate_json(
+            prompt=EMBLEMS_PROMPT.format(
+                country_name=country_name, region=region or "the world"
+            ),
+            schema=EMBLEMS_SCHEMA,
+            max_tokens=1500,
         )
 
     async def generate_feed_facts(

@@ -53,6 +53,21 @@ export interface CountryCulture {
 
 export type CultureResponse = AiContentResponse<CountryCulture>;
 
+/** Cultural emblems (backend kind: "emblems"). */
+
+export interface CulturalEmblem {
+  name: string;
+  local_name: string;
+  category: string;
+  description: string;
+}
+
+export interface CountryEmblems {
+  emblems: CulturalEmblem[];
+}
+
+export type EmblemsResponse = AiContentResponse<CountryEmblems>;
+
 /** "Did You Know?" feed. */
 
 export interface FeedFact {

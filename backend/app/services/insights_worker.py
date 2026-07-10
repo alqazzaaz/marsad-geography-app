@@ -17,6 +17,7 @@ from app.services.feed_service import BATCH_SIZE, KIND_FEED, FeedService
 from app.services.insights_service import (
     JOBS_CHANNEL,
     KIND_CULTURE,
+    KIND_EMBLEMS,
     KIND_INSIGHTS,
     InsightsService,
 )
@@ -91,6 +92,8 @@ async def _process_job(code: str, kind: str) -> None:
 
             if kind == KIND_INSIGHTS:
                 data = await claude.generate_insights(name, region)
+            elif kind == KIND_EMBLEMS:
+                data = await claude.generate_emblems(name, region)
             elif kind == KIND_CULTURE:
                 languages = [
                     lang.get("name", "") for lang in raw_country.get("languages") or []
