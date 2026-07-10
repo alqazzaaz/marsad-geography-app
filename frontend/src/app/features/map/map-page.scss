@@ -21,10 +21,16 @@
   left: 1.8rem;
   z-index: 10;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 0.65rem;
   pointer-events: none;
   transition: opacity 0.4s ease;
+
+  .brand-logo {
+    width: 30px;
+    height: 30px;
+    filter: drop-shadow(0 0 12px rgba(201, 162, 75, 0.3));
+  }
 
   .brand-arabic {
     font-family: var(--font-arabic);
@@ -64,6 +70,8 @@
 }
 
 .account-btn {
+  display: inline-block;
+  text-decoration: none;
   padding: 0.45rem 1.1rem;
   border: 1px solid rgba(201, 162, 75, 0.4);
   border-radius: 999px;

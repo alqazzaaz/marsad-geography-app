@@ -7,6 +7,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import mapboxgl from 'mapbox-gl/dist/mapbox-gl-csp.js';
 
 import { STRINGS } from '../../core/i18n/strings';
@@ -46,7 +47,7 @@ function countryFilter(excluded: string[], promoted: string[]): mapboxgl.FilterS
 
 @Component({
   selector: 'app-map-page',
-  imports: [AuthPanel, CountryPanel, FeedCard],
+  imports: [AuthPanel, CountryPanel, FeedCard, RouterLink],
   templateUrl: './map-page.html',
   styleUrl: './map-page.scss',
 })
@@ -326,14 +327,14 @@ export class MapPage implements AfterViewInit, OnDestroy {
       minzoom: 3,
       layout: {
         'text-field': ['get', 'name'],
-        'text-font': ['DIN Pro Medium', 'Arial Unicode MS Regular'],
-        'text-size': ['interpolate', ['linear'], ['zoom'], 3, 11, 7, 20],
+        'text-font': ['DIN Pro Regular', 'Arial Unicode MS Regular'],
+        'text-size': ['interpolate', ['linear'], ['zoom'], 3, 9, 7, 13],
         'text-transform': 'none',
       },
       paint: {
-        'text-color': 'rgb(146, 154, 170)',
-        'text-halo-color': 'rgba(7, 10, 16, 0.85)',
-        'text-halo-width': 1.2,
+        'text-color': 'rgb(112, 118, 130)',
+        'text-halo-color': 'rgba(7, 10, 16, 0.7)',
+        'text-halo-width': 1,
       },
     });
   }

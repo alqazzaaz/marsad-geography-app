@@ -12,6 +12,8 @@
 - 🗣️ **Language & culture card** — key phrases with pronunciation, cultural dos and don'ts, tipping and customs
 - 💡 **"Did You Know?" feed** — refreshable, genuinely surprising facts about the world
 - 📜 **The story of Marsad** — an editorial About page on the name, the House of Wisdom, and Ibn Battuta
+- 💬 **Ask the Observatory** — a streaming, per-country AI Q&A chat grounded in the cached insights
+- 🧭 **Configurable worldview** — countries can be excluded or promoted on the map via environment config
 
 ## Tech Stack
 
@@ -110,7 +112,7 @@ Marsad is being built in deliberate phases:
 | 4 | AI insights (Claude) + budget guard + rate limiting | ✅ |
 | 5 | Language & culture card + "Did You Know?" feed | ✅ |
 | 6 | Authentication (JWT, browse-free / login-to-save) | ✅ |
-| 7 | About page + logo + polish | ⏳ |
+| 7 | About page + logo + polish | ✅ |
 | 8 | Observability (Sentry) + CI/CD + deployment | ⏳ |
 
 ## License

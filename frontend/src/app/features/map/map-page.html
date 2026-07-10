@@ -2,11 +2,13 @@
   <div #mapContainer class="map"></div>
 
   <header class="brand" [class.tucked]="panelOpen()">
+    <img src="/logo.svg" alt="" class="brand-logo" />
     <span class="brand-arabic">{{ t.brand.nameArabic }}</span>
     <span class="brand-name">{{ t.brand.name }}</span>
   </header>
 
   <div class="account" [class.tucked]="panelOpen()">
+    <a class="account-btn" routerLink="/about">{{ t.nav.about }}</a>
     @if (auth.currentUser(); as user) {
       <span class="account-name">{{ user.display_name }}</span>
       <button class="account-btn" type="button" (click)="auth.logout()">

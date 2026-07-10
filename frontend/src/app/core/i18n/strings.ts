@@ -8,6 +8,9 @@ export const STRINGS = {
     nameArabic: 'مرصد',
     tagline: 'The Observatory of the World',
   },
+  nav: {
+    about: 'The Story',
+  },
   welcome: {
     line1: 'You are now in the Marsad —',
     line2: 'the observatory of the world.',
