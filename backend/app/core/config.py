@@ -44,6 +44,8 @@ class Settings(BaseSettings):
     # --- AI insights (Claude) ---
     anthropic_model: str = "claude-sonnet-4-6"
     claude_max_tokens: int = 4096
+    # Tighter cap for the insights profile (entries are 2-3 sentences).
+    claude_insights_max_tokens: int = 2600
     # Pricing per million tokens for the model above — used by the budget guard.
     claude_input_cost_per_mtok: float = 3.0
     claude_output_cost_per_mtok: float = 15.0

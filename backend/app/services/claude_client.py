@@ -173,7 +173,12 @@ Produce:
 actually like, versus the tourist-brochure version.
 - notable_people: 4 notable people — mix widely famous figures with people who deserve to \
 be better known (set widely_known accordingly).
-- hidden_gems: 3 places or experiences most visitors miss, with what makes each special."""
+- hidden_gems: 3 places or experiences most visitors miss, with what makes each special.
+
+Length discipline (strict):
+- Every detail and known_for text: 2–3 sentences maximum.
+- One idea per entry, stated once — cut any sentence that elaborates on a point already made.
+- Sharp and surprising, never encyclopedic. Readers skim; every sentence must earn its place."""
 
 
 class ClaudeClient:
@@ -214,6 +219,7 @@ class ClaudeClient:
         return await self._generate_json(
             prompt=INSIGHTS_PROMPT.format(country_name=country_name, region=region or "the world"),
             schema=INSIGHTS_SCHEMA,
+            max_tokens=self._settings.claude_insights_max_tokens,
         )
 
     async def generate_culture(self, country_name: str, languages: list[str]) -> dict[str, Any]:
@@ -264,7 +270,9 @@ class ClaudeClient:
 
         await self._record_spend(final.usage.input_tokens, final.usage.output_tokens)
 
-    async def _generate_json(self, prompt: str, schema: dict[str, Any]) -> dict[str, Any]:
+    async def _generate_json(
+        self, prompt: str, schema: dict[str, Any], max_tokens: int | None = None
+    ) -> dict[str, Any]:
         if not self._settings.anthropic_api_key:
             raise ClaudeGenerationError("ANTHROPIC_API_KEY is not configured")
         if not await self.budget_available():
@@ -273,7 +281,7 @@ class ClaudeClient:
         try:
             response = await self._client.messages.create(
                 model=self._settings.anthropic_model,
-                max_tokens=self._settings.claude_max_tokens,
+                max_tokens=max_tokens or self._settings.claude_max_tokens,
                 system=SYSTEM_PROMPT,
                 messages=[{"role": "user", "content": prompt}],
                 output_config={"format": {"type": "json_schema", "schema": schema}},
