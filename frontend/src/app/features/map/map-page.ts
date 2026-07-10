@@ -327,14 +327,25 @@ export class MapPage implements AfterViewInit, OnDestroy {
       minzoom: 3,
       layout: {
         'text-field': ['get', 'name'],
+        // Copied from dark-v11's own country-label layer so promoted labels
+        // are indistinguishable from neighboring countries (size curve of a
+        // mid-rank country, symbolrank ~5).
         'text-font': ['DIN Pro Medium', 'Arial Unicode MS Regular'],
-        'text-size': ['interpolate', ['linear'], ['zoom'], 3, 10.5, 7, 16],
+        'text-size': [
+          'interpolate',
+          ['cubic-bezier', 0.2, 0, 0.7, 1],
+          ['zoom'],
+          1,
+          8,
+          9,
+          17,
+        ],
         'text-transform': 'none',
       },
       paint: {
-        'text-color': 'rgb(168, 174, 187)',
-        'text-halo-color': 'rgba(7, 10, 16, 0.75)',
-        'text-halo-width': 1.1,
+        'text-color': 'hsl(0, 0%, 40%)',
+        'text-halo-color': 'hsl(0, 0%, 3%)',
+        'text-halo-width': 1.25,
       },
     });
   }
