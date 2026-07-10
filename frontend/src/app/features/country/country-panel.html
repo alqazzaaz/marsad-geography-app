@@ -17,6 +17,13 @@
     </div>
   } @else if (country(); as c) {
     <div class="panel-body">
+    @if (banner(); as bannerUrl) {
+      <div class="hero">
+        <img class="hero-img" [src]="bannerUrl" [alt]="c.name" />
+        <div class="hero-fade" aria-hidden="true"></div>
+        <p class="hero-script" aria-hidden="true">{{ c.native_name || c.name }}</p>
+      </div>
+    }
     <header class="head">
       @if (c.flag_png) {
         <img class="flag" [src]="c.flag_png" [alt]="c.name + ' flag'" />
@@ -184,6 +191,9 @@
             <div class="emblem-grid">
               @for (emblem of em.emblems; track emblem.name) {
                 <article class="emblem">
+                  @if (emblem.image_url) {
+                    <img class="emblem-img" [src]="emblem.image_url" [alt]="emblem.name" loading="lazy" />
+                  }
                   <p class="emblem-category">{{ emblem.category }}</p>
                   <h5 class="emblem-name">
                     {{ emblem.name }}

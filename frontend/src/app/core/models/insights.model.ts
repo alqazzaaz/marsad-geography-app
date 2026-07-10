@@ -60,6 +60,11 @@ export interface CulturalEmblem {
   local_name: string;
   category: string;
   description: string;
+  image_url?: string | null;
+}
+
+export interface MediaResponse {
+  banner_url: string | null;
 }
 
 export interface CountryEmblems {

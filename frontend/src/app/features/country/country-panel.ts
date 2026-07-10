@@ -140,15 +140,26 @@ export class CountryPanel {
     () => this.country()?.alpha2_code,
   );
 
+  readonly banner = signal<string | null>(null);
+
 
   constructor() {
     effect(() => {
       const c = this.country();
       this.resetChat();
+      this.banner.set(null);
       if (c) {
         this.insights.start(c.alpha2_code);
         this.culture.start(c.alpha2_code);
         this.emblems.start(c.alpha2_code);
+        this.insightsService.getMedia(c.alpha2_code).subscribe({
+          next: (media) => {
+            if (this.country()?.alpha2_code === c.alpha2_code) {
+              this.banner.set(media.banner_url);
+            }
+          },
+          error: () => undefined, // no banner is fine
+        });
       } else {
         this.insights.reset();
         this.culture.reset();

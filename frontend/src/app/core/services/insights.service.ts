@@ -7,6 +7,7 @@ import {
   EmblemsResponse,
   FeedResponse,
   InsightsResponse,
+  MediaResponse,
 } from '../models/insights.model';
 
 @Injectable({ providedIn: 'root' })
@@ -23,6 +24,10 @@ export class InsightsService {
 
   getEmblems(code: string): Observable<EmblemsResponse> {
     return this.http.get<EmblemsResponse>(`/api/countries/${code}/emblems`);
+  }
+
+  getMedia(code: string): Observable<MediaResponse> {
+    return this.http.get<MediaResponse>(`/api/countries/${code}/media`);
   }
 
   getFeed(limit = 8): Observable<FeedResponse> {

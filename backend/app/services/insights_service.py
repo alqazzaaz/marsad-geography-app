@@ -72,7 +72,9 @@ class InsightsService:
         await self._cache.publish(JOBS_CHANNEL, json.dumps({"code": code, "kind": kind}))
         return True
 
-    async def store(self, code: str, kind: str, data: dict[str, Any]) -> dict[str, Any]:
+    async def store(
+        self, code: str, kind: str, data: dict[str, Any], model: str | None = None
+    ) -> dict[str, Any]:
         """Write a generated payload to BOTH PostgreSQL and Redis."""
         code = code.upper()
         generated_at = datetime.now(timezone.utc)
@@ -80,7 +82,7 @@ class InsightsService:
         stmt = pg_insert(CountryInsight).values(
             alpha2_code=code,
             kind=kind,
-            model=self._settings.anthropic_model,
+            model=model or self._settings.anthropic_model,
             data=data,
             generated_at=generated_at,
         )

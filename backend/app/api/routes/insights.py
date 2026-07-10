@@ -25,6 +25,7 @@ from app.services.insights_service import (
     KIND_INSIGHTS,
     InsightsService,
 )
+from app.services.media_service import KIND_MEDIA, MEDIA_MODEL, fetch_banner
 
 router = APIRouter(prefix="/countries", tags=["insights"])
 
@@ -101,3 +102,28 @@ async def get_country_emblems(
     db: AsyncSession = Depends(get_db),
 ) -> dict:
     return await _serve_ai_content(KIND_EMBLEMS, code, request, response, db)
+
+
+@router.get("/{code}/media")
+async def get_country_media(
+    code: str = CODE_PATH,
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    """Hero banner from Wikivoyage/Wikipedia — free APIs, cached forever."""
+    cache = get_redis()
+    service = InsightsService(db, cache)
+
+    try:
+        raw, _ = await CountryService(db, cache).get_country(code)
+    except CountryNotFoundError:
+        raise HTTPException(status_code=404, detail=f"Unknown country code: {code.upper()}")
+    except CountriesAPIError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+    alpha2 = raw["alpha2Code"]
+
+    cached = await service.get_cached(alpha2, KIND_MEDIA)
+    if cached is None:
+        banner = await fetch_banner(raw["name"])
+        cached = await service.store(alpha2, KIND_MEDIA, {"banner_url": banner}, MEDIA_MODEL)
+
+    return {"banner_url": cached["data"].get("banner_url")}

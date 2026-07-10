@@ -14,6 +14,7 @@ from app.db.session import async_session_factory
 from app.services.claude_client import BudgetExceededError, ClaudeClient, ClaudeGenerationError
 from app.services.country_service import CountryService
 from app.services.feed_service import BATCH_SIZE, KIND_FEED, FeedService
+from app.services.media_service import enrich_emblems_with_images
 from app.services.insights_service import (
     JOBS_CHANNEL,
     KIND_CULTURE,
@@ -94,6 +95,9 @@ async def _process_job(code: str, kind: str) -> None:
                 data = await claude.generate_insights(name, region)
             elif kind == KIND_EMBLEMS:
                 data = await claude.generate_emblems(name, region)
+                data["emblems"] = await enrich_emblems_with_images(
+                    data.get("emblems", []), name
+                )
             elif kind == KIND_CULTURE:
                 languages = [
                     lang.get("name", "") for lang in raw_country.get("languages") or []
