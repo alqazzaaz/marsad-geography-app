@@ -65,6 +65,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
   private hoveredCountryId: string | number | null = null;
   private styleLoaded = false;
   private pulseFrame: number | null = null;
+  private selected: { a2: string; a3: string } | null = null;
   excluded: string[] = [];
   private promoted: string[] = [];
 
@@ -268,6 +269,13 @@ export class MapPage implements AfterViewInit, OnDestroy {
       if (!feature) {
         return;
       }
+      // The selected country is already highlighted by the pulse — no hover
+      // tint, no pointer cursor, not clickable.
+      if (feature.properties?.['iso_3166_1'] === this.selected?.a2) {
+        map.getCanvas().style.cursor = '';
+        this.setHovered(null);
+        return;
+      }
       map.getCanvas().style.cursor = 'pointer';
       this.setHovered(feature.id ?? null);
     });
@@ -279,7 +287,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
 
     map.on('click', FILL_LAYER, (event) => {
       const code = event.features?.[0]?.properties?.['iso_3166_1'];
-      if (typeof code === 'string' && code.length === 2) {
+      if (typeof code === 'string' && code.length === 2 && code !== this.selected?.a2) {
         this.selectCountry(code);
       }
     });
@@ -287,6 +295,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
 
   /** Point the highlight layers at the selected country and start throbbing. */
   private highlightSelection(alpha2: string, alpha3: string): void {
+    this.selected = { a2: alpha2.toUpperCase(), a3: alpha3.toUpperCase() };
     const map = this.map;
     if (!map || !map.getLayer(SELECTED_LINE_LAYER)) {
       return;
@@ -311,6 +320,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
   }
 
   private clearSelection(): void {
+    this.selected = null;
     this.stopPulse();
     const map = this.map;
     if (map?.getLayer(SELECTED_LINE_LAYER)) {

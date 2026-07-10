@@ -3,7 +3,6 @@
   role="dialog"
   aria-label="Country profile"
   [class]="country() ? regionClass(country()!) : ''"
-  [style.--accent]="accent() ?? '#c9a24b'"
 >
   <button class="close" type="button" (click)="closed.emit()" [attr.aria-label]="t.close">✕</button>
 

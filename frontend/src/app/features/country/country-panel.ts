@@ -24,7 +24,6 @@ import {
 } from '../../core/models/insights.model';
 import { AskHistoryMessage, AskService } from '../../core/services/ask.service';
 import { InsightsService } from '../../core/services/insights.service';
-import { extractFlagAccent } from '../../core/util/flag-accent';
 import { areaComparison, populationComparison, StatComparison } from '../../core/util/comparisons';
 
 const POLL_INTERVAL_MS = 3000;
@@ -141,25 +140,15 @@ export class CountryPanel {
     () => this.country()?.alpha2_code,
   );
 
-  /** Flag-derived accent (CSS color) — falls back to Marsad gold. */
-  readonly accent = signal<string | null>(null);
 
   constructor() {
     effect(() => {
       const c = this.country();
       this.resetChat();
-      this.accent.set(null);
       if (c) {
         this.insights.start(c.alpha2_code);
         this.culture.start(c.alpha2_code);
         this.emblems.start(c.alpha2_code);
-        if (c.flag_png) {
-          void extractFlagAccent(c.flag_png).then((color) => {
-            if (this.country()?.alpha2_code === c.alpha2_code) {
-              this.accent.set(color);
-            }
-          });
-        }
       } else {
         this.insights.reset();
         this.culture.reset();
