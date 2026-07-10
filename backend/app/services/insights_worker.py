@@ -24,11 +24,27 @@ from app.services.insights_service import (
 logger = logging.getLogger(__name__)
 
 
+# A country click queues two jobs (insights + culture); run them concurrently
+# so the user waits for the slowest, not the sum. The semaphore caps parallel
+# Claude calls if many countries are opened at once.
+MAX_CONCURRENT_JOBS = 3
+
+
 async def run_insights_worker() -> None:
     cache = get_redis()
     pubsub = cache.pubsub()
     await pubsub.subscribe(JOBS_CHANNEL)
     logger.info("Insights worker subscribed to %s", JOBS_CHANNEL)
+
+    semaphore = asyncio.Semaphore(MAX_CONCURRENT_JOBS)
+    tasks: set[asyncio.Task] = set()
+
+    async def run_job(code: str, kind: str) -> None:
+        async with semaphore:
+            try:
+                await _process_job(code, kind)
+            except Exception:
+                logger.exception("Insight job failed: %s/%s", kind, code)
 
     try:
         async for message in pubsub.listen():
@@ -36,10 +52,15 @@ async def run_insights_worker() -> None:
                 continue
             try:
                 job = json.loads(message["data"])
-                await _process_job(job["code"], job["kind"])
-            except Exception:
-                logger.exception("Insight job failed: %r", message["data"])
+            except (json.JSONDecodeError, TypeError):
+                logger.exception("Malformed insight job: %r", message["data"])
+                continue
+            task = asyncio.create_task(run_job(job["code"], job["kind"]))
+            tasks.add(task)
+            task.add_done_callback(tasks.discard)
     except asyncio.CancelledError:
+        for task in tasks:
+            task.cancel()
         await pubsub.unsubscribe(JOBS_CHANNEL)
         await pubsub.aclose()
         raise
