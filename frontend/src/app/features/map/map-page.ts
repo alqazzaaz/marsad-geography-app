@@ -327,14 +327,14 @@ export class MapPage implements AfterViewInit, OnDestroy {
       minzoom: 3,
       layout: {
         'text-field': ['get', 'name'],
-        'text-font': ['DIN Pro Regular', 'Arial Unicode MS Regular'],
-        'text-size': ['interpolate', ['linear'], ['zoom'], 3, 9, 7, 13],
+        'text-font': ['DIN Pro Medium', 'Arial Unicode MS Regular'],
+        'text-size': ['interpolate', ['linear'], ['zoom'], 3, 10.5, 7, 16],
         'text-transform': 'none',
       },
       paint: {
-        'text-color': 'rgb(112, 118, 130)',
-        'text-halo-color': 'rgba(7, 10, 16, 0.7)',
-        'text-halo-width': 1,
+        'text-color': 'rgb(168, 174, 187)',
+        'text-halo-color': 'rgba(7, 10, 16, 0.75)',
+        'text-halo-width': 1.1,
       },
     });
   }
