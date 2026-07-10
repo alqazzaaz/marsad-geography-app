@@ -30,13 +30,19 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "mapbox-gl-csp-worker.js",
+                "input": "node_modules/mapbox-gl/dist",
+                "output": "/"
               }
             ],
             "styles": [
               "src/styles.scss"
             ],
             "allowedCommonJsDependencies": [
-              "mapbox-gl"
+              "mapbox-gl",
+              "mapbox-gl/dist/mapbox-gl-csp.js"
             ]
           },
           "configurations": {

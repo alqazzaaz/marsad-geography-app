@@ -18,6 +18,9 @@ venv/
 .mypy_cache/
 .ruff_cache/
 
+# --- Scratch / debug ---
+error.txt
+
 # --- IDE / OS ---
 .vscode/
 .idea/

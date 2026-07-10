@@ -7,7 +7,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import mapboxgl from 'mapbox-gl';
+import mapboxgl from 'mapbox-gl/dist/mapbox-gl-csp.js';
 
 import { STRINGS } from '../../core/i18n/strings';
 import { CountryDetail } from '../../core/models/country.model';
@@ -122,6 +122,10 @@ export class MapPage implements AfterViewInit, OnDestroy {
 
   private initMap(token: string): void {
     mapboxgl.accessToken = token;
+    // CSP build: the worker ships as a separate file (copied from
+    // node_modules via angular.json assets) instead of a blob extracted from
+    // the main bundle, which Angular's minifier corrupts.
+    (mapboxgl as { workerUrl?: string }).workerUrl = '/mapbox-gl-csp-worker.js';
 
     this.map = new mapboxgl.Map({
       container: this.mapContainer().nativeElement,
