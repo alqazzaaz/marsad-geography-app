@@ -45,6 +45,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
 
   private map: mapboxgl.Map | null = null;
   private hoveredCountryId: string | number | null = null;
+  private styleLoaded = false;
 
   readonly t = STRINGS;
 
@@ -134,14 +135,18 @@ export class MapPage implements AfterViewInit, OnDestroy {
     });
 
     this.map.on('error', (event) => {
-      // Only surface fatal load errors (e.g. bad token), not tile hiccups.
-      if (!this.map?.isStyleLoaded()) {
-        console.error('Mapbox error', event.error);
+      console.error('Mapbox error', event.error);
+      // Mapbox emits benign errors during startup (aborted tiles, missing
+      // sprites). Only an auth failure before the style loads is fatal.
+      const status = (event.error as { status?: number } | undefined)?.status;
+      if (!this.styleLoaded && (status === 401 || status === 403)) {
         this.mapError.set(true);
       }
     });
 
     this.map.on('style.load', () => {
+      this.styleLoaded = true;
+      this.mapError.set(false);
       this.map!.setFog({
         color: 'rgba(11, 15, 23, 0.9)',
         'high-color': 'rgba(28, 36, 54, 0.6)',
