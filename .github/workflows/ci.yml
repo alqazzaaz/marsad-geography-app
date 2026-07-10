@@ -1,4 +1,4 @@
-name: CI
+﻿name: CI
 
 on:
   push:
@@ -22,14 +22,14 @@ jobs:
           pip install -r backend/requirements.txt
           pip install flake8 pytest
       - name: Syntax check (flake8)
-        # E9/F63/F7/F82 = real errors (syntax, undefined names) — not style nits
+        # E9/F63/F7/F82 = real errors (syntax, undefined names) â€” not style nits
         run: flake8 backend/app --select=E9,F63,F7,F82 --show-source
       - name: Run tests (if any)
         run: |
           if [ -d backend/tests ]; then
             pytest backend/tests -v
           else
-            echo "No backend tests yet — skipping."
+            echo "No backend tests yet â€” skipping."
           fi
 
   frontend:
@@ -55,14 +55,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build all images
-        # Secrets come from GitHub Actions secrets — never hardcoded.
+        # Secrets come from GitHub Actions secrets â€” never hardcoded.
         # The build itself needs no real values; compose has safe defaults
         # for anything unset.
         env:
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
         run: docker compose build
 
-  # ── CD (push to main only; skips politely until Azure secrets exist) ──
+  # â”€â”€ CD (push to main only; skips politely until Azure secrets exist) â”€â”€
 
   deploy-frontend:
     name: Deploy frontend (Static Web Apps)
@@ -79,7 +79,7 @@ jobs:
             echo "enabled=true" >> "$GITHUB_OUTPUT"
           else
             echo "enabled=false" >> "$GITHUB_OUTPUT"
-            echo "AZURE_STATIC_WEB_APPS_API_TOKEN not set — skipping deploy."
+            echo "AZURE_STATIC_WEB_APPS_API_TOKEN not set â€” skipping deploy."
           fi
       - uses: actions/checkout@v4
         if: steps.gate.outputs.enabled == 'true'
@@ -115,7 +115,7 @@ jobs:
             echo "enabled=true" >> "$GITHUB_OUTPUT"
           else
             echo "enabled=false" >> "$GITHUB_OUTPUT"
-            echo "AZURE_CREDENTIALS not set — skipping deploy."
+            echo "AZURE_CREDENTIALS not set â€” skipping deploy."
           fi
       - uses: actions/checkout@v4
         if: steps.gate.outputs.enabled == 'true'
@@ -129,7 +129,7 @@ jobs:
       - name: Build and push image
         if: steps.gate.outputs.enabled == 'true'
         run: |
-          IMAGE=ghcr.io/${{ github.repository_owner }}/marsad-api
+          IMAGE=ghcr.io/${{ github.repository_owner }}/marsad-backend
           docker build backend -t $IMAGE:${{ github.sha }} -t $IMAGE:latest
           docker push $IMAGE:${{ github.sha }}
           docker push $IMAGE:latest
@@ -141,5 +141,5 @@ jobs:
       - name: Roll out new revision
         if: steps.gate.outputs.enabled == 'true'
         run: |
-          az containerapp update -n marsad-api -g marsad-rg \
-            --image ghcr.io/${{ github.repository_owner }}/marsad-api:${{ github.sha }}
+          az containerapp update -n marsad-backend -g marsad-rg \
+            --image ghcr.io/${{ github.repository_owner }}/marsad-backend:${{ github.sha }}
