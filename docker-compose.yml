@@ -42,6 +42,8 @@ services:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY:-dev-only-secret-change-me}
       MAP_EXCLUDED_COUNTRIES: ${MAP_EXCLUDED_COUNTRIES:-}
       MAP_PROMOTED_COUNTRIES: ${MAP_PROMOTED_COUNTRIES:-}
+      SENTRY_DSN: ${SENTRY_DSN:-}
+      ENVIRONMENT: ${ENVIRONMENT:-development}
     ports:
       - "8000:8000"
     depends_on:

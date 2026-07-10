@@ -17,6 +17,17 @@ from app.services.insights_worker import run_insights_worker
 
 settings = get_settings()
 
+if settings.sentry_dsn:
+    import sentry_sdk
+
+    sentry_sdk.init(
+        dsn=settings.sentry_dsn,
+        environment=settings.environment,
+        # Errors always; a light sample of performance traces.
+        traces_sample_rate=0.1,
+        send_default_pii=False,
+    )
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

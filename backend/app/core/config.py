@@ -73,6 +73,10 @@ class Settings(BaseSettings):
     # Max AI-generation requests per IP per day.
     ai_rate_limit_per_day: int = 30
 
+    # --- Observability ---
+    # Sentry error tracking activates only when a DSN is provided.
+    sentry_dsn: str = ""
+
     # --- Authentication (JWT) ---
     # MUST be overridden with a long random value in production (.env).
     jwt_secret_key: str = "dev-only-secret-change-me"

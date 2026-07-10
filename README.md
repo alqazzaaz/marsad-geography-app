@@ -100,6 +100,33 @@ npm install
 npm start   # http://localhost:4200, /api proxied to the backend
 ```
 
+## Deploying to Azure
+
+The stack is plain Docker Compose, so the lightest path is a single **Azure
+VM** (or **Azure Container Apps** if you prefer managed containers):
+
+1. **Provision** an Ubuntu VM (B2s is plenty) and install Docker + the
+   Compose plugin.
+2. **Clone** this repository and create `.env` from `.env.example` with
+   production values:
+   - `JWT_SECRET_KEY` — long random value (`openssl rand -hex 48`)
+   - `POSTGRES_PASSWORD` — a real password
+   - `ANTHROPIC_API_KEY`, `MAPBOX_ACCESS_TOKEN`, `SENTRY_DSN`
+   - `ENVIRONMENT=production`
+   - `CORS_ORIGINS=https://your-domain`
+3. **Run** `docker compose up -d --build`. nginx serves the app on port 8080;
+   put Azure's load balancer or a Caddy/nginx reverse proxy with TLS in
+   front of it.
+4. **Restrict the Mapbox token** to `https://your-domain` in your Mapbox
+   account (Account → Tokens → URL restrictions) and remove any localhost
+   entries used during development.
+5. **CI** already runs on every push (GitHub Actions: backend checks,
+   frontend build, compose build) — add a deploy job later if you want
+   pushes to `main` to roll out automatically.
+
+Data (PostgreSQL + Redis) lives in named Docker volumes; back up the
+`postgres_data` volume — it holds users and every AI generation ever made.
+
 ## Project Status
 
 Marsad is being built in deliberate phases:
@@ -113,7 +140,7 @@ Marsad is being built in deliberate phases:
 | 5 | Language & culture card + "Did You Know?" feed | ✅ |
 | 6 | Authentication (JWT, browse-free / login-to-save) | ✅ |
 | 7 | About page + logo + polish | ✅ |
-| 8 | Observability (Sentry) + CI/CD + deployment | ⏳ |
+| 8 | Observability (Sentry) + CI/CD + deployment | ✅ |
 
 ## License
 
