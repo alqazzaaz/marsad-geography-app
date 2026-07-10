@@ -24,11 +24,56 @@
   font-size: 0.95rem;
   cursor: pointer;
   transition: all 0.3s ease;
+  animation: pill-breathe 4s ease-in-out infinite;
+
+  .star {
+    animation: star-twinkle 4s ease-in-out infinite;
+  }
 
   &:hover {
     border-color: var(--gold-400);
     color: var(--gold-300);
-    box-shadow: 0 0 24px rgba(201, 162, 75, 0.15);
+    box-shadow: 0 0 24px rgba(201, 162, 75, 0.35);
+    animation-play-state: paused;
+  }
+}
+
+@keyframes pill-breathe {
+  0%,
+  100% {
+    box-shadow: 0 0 0 rgba(201, 162, 75, 0);
+    border-color: rgba(201, 162, 75, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 22px rgba(201, 162, 75, 0.28);
+    border-color: rgba(201, 162, 75, 0.75);
+  }
+}
+
+@keyframes star-twinkle {
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.25) rotate(20deg);
+  }
+}
+
+.fact-swap {
+  animation: fact-in 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes fact-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

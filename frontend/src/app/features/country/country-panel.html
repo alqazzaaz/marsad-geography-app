@@ -1,4 +1,10 @@
-<aside class="panel" role="dialog" aria-label="Country profile">
+<aside
+  class="panel"
+  role="dialog"
+  aria-label="Country profile"
+  [class]="country() ? regionClass(country()!) : ''"
+  [style.--accent]="accent() ?? '#c9a24b'"
+>
   <button class="close" type="button" (click)="closed.emit()" [attr.aria-label]="t.close">✕</button>
 
   @if (loading()) {
@@ -11,17 +17,8 @@
       <p>{{ t.loadError }}</p>
     </div>
   } @else if (country(); as c) {
+    <div class="panel-body">
     <header class="head">
-      @if (silhouette(); as s) {
-        <svg
-          class="silhouette"
-          [attr.viewBox]="s.viewBox"
-          preserveAspectRatio="xMidYMid meet"
-          aria-hidden="true"
-        >
-          <path [attr.d]="s.path" />
-        </svg>
-      }
       @if (c.flag_png) {
         <img class="flag" [src]="c.flag_png" [alt]="c.name + ' flag'" />
       }
@@ -39,10 +36,28 @@
         <div class="fact"><dt>{{ t.capital }}</dt><dd>{{ c.capital }}</dd></div>
       }
       @if (c.population) {
-        <div class="fact"><dt>{{ t.population }}</dt><dd>{{ c.population | number }}</dd></div>
+        <div class="fact">
+          <dt>{{ t.population }}</dt>
+          <dd>{{ c.population | number }}</dd>
+          @if (populationCompare(c); as cmp) {
+            <div class="stat-bar" aria-hidden="true">
+              <div class="stat-bar-fill" [style.width.%]="cmp.percent"></div>
+            </div>
+            <p class="stat-caption">{{ cmp.caption }}</p>
+          }
+        </div>
       }
       @if (c.area) {
-        <div class="fact"><dt>{{ t.area }}</dt><dd>{{ c.area | number }} km²</dd></div>
+        <div class="fact">
+          <dt>{{ t.area }}</dt>
+          <dd>{{ c.area | number }} km²</dd>
+          @if (areaCompare(c); as cmp) {
+            <div class="stat-bar" aria-hidden="true">
+              <div class="stat-bar-fill" [style.width.%]="cmp.percent"></div>
+            </div>
+            <p class="stat-caption">{{ cmp.caption }}</p>
+          }
+        </div>
       }
       @if (c.languages.length) {
         <div class="fact"><dt>{{ t.languages }}</dt><dd>{{ languageList(c) }}</dd></div>
@@ -254,8 +269,9 @@
         }
       }
     </section>
+    </div>
 
-    <section class="insights ask">
+    <section class="ask-dock">
       <header class="insights-head">
         <h3>{{ ta.heading }}</h3>
         <span class="badge">{{ ti.badge }}</span>
@@ -294,7 +310,6 @@
           {{ ta.send }}
         </button>
       </form>
-      <p class="insights-disclaimer">{{ ta.disclaimer }}</p>
     </section>
   }
 </aside>

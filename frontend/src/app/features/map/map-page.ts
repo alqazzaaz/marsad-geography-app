@@ -25,6 +25,9 @@ const FILL_LAYER = 'marsad-country-fills';
 const LINE_LAYER = 'marsad-country-lines';
 const PROMOTED_LABEL_SOURCE = 'marsad-promoted-labels';
 const PROMOTED_LABEL_LAYER = 'marsad-promoted-label-layer';
+const SELECTED_FILL_LAYER = 'marsad-selected-fill';
+const SELECTED_LINE_LAYER = 'marsad-selected-line';
+const NO_SELECTION_FILTER: mapboxgl.FilterSpecification = ['==', ['get', 'iso_3166_1'], '__none__'];
 
 /**
  * Which polygons are interactive, honoring the configurable worldview:
@@ -61,6 +64,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
   private map: mapboxgl.Map | null = null;
   private hoveredCountryId: string | number | null = null;
   private styleLoaded = false;
+  private pulseFrame: number | null = null;
   excluded: string[] = [];
   private promoted: string[] = [];
 
@@ -91,6 +95,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.stopPulse();
     this.map?.remove();
   }
 
@@ -101,6 +106,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
   closePanel(): void {
     this.panelOpen.set(false);
     this.country.set(null);
+    this.clearSelection();
     if (this.map) {
       this.map.easeTo({ padding: { right: 0 }, duration: 600 });
     }
@@ -119,6 +125,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
       next: (detail) => {
         this.country.set(detail);
         this.countryLoading.set(false);
+        this.highlightSelection(detail.alpha2_code, detail.alpha3_code);
         this.flyToCountry(detail);
       },
       error: () => {
@@ -229,6 +236,30 @@ export class MapPage implements AfterViewInit, OnDestroy {
       },
     });
 
+    // Selected-country highlight: a soft fill and a throbbing gold border,
+    // animated via requestAnimationFrame while a country is open.
+    map.addLayer({
+      id: SELECTED_FILL_LAYER,
+      type: 'fill',
+      source: COUNTRY_SOURCE,
+      'source-layer': COUNTRY_SOURCE_LAYER,
+      filter: NO_SELECTION_FILTER,
+      paint: { 'fill-color': '#c9a24b', 'fill-opacity': 0.1 },
+    });
+    map.addLayer({
+      id: SELECTED_LINE_LAYER,
+      type: 'line',
+      source: COUNTRY_SOURCE,
+      'source-layer': COUNTRY_SOURCE_LAYER,
+      filter: NO_SELECTION_FILTER,
+      paint: {
+        'line-color': '#d9b96c',
+        'line-width': 2,
+        'line-opacity': 0.9,
+        'line-blur': 0.5,
+      },
+    });
+
     this.applyWorldviewToBaseLabels();
     void this.addPromotedLabels();
 
@@ -252,6 +283,66 @@ export class MapPage implements AfterViewInit, OnDestroy {
         this.selectCountry(code);
       }
     });
+  }
+
+  /** Point the highlight layers at the selected country and start throbbing. */
+  private highlightSelection(alpha2: string, alpha3: string): void {
+    const map = this.map;
+    if (!map || !map.getLayer(SELECTED_LINE_LAYER)) {
+      return;
+    }
+    const filter: mapboxgl.FilterSpecification = [
+      'all',
+      [
+        'any',
+        ['==', ['get', 'disputed'], 'false'],
+        ['in', ['get', 'iso_3166_1'], ['literal', this.promoted]],
+      ],
+      ['any', ['==', ['get', 'worldview'], 'all'], ['in', 'US', ['get', 'worldview']]],
+      [
+        'any',
+        ['==', ['get', 'iso_3166_1'], alpha2],
+        ['==', ['get', 'iso_3166_1_alpha_3'], alpha3],
+      ],
+    ];
+    map.setFilter(SELECTED_FILL_LAYER, filter);
+    map.setFilter(SELECTED_LINE_LAYER, filter);
+    this.startPulse();
+  }
+
+  private clearSelection(): void {
+    this.stopPulse();
+    const map = this.map;
+    if (map?.getLayer(SELECTED_LINE_LAYER)) {
+      map.setFilter(SELECTED_FILL_LAYER, NO_SELECTION_FILTER);
+      map.setFilter(SELECTED_LINE_LAYER, NO_SELECTION_FILTER);
+    }
+  }
+
+  private startPulse(): void {
+    this.stopPulse();
+    const start = performance.now();
+    const tick = (now: number) => {
+      const map = this.map;
+      if (!map || !map.getLayer(SELECTED_LINE_LAYER)) {
+        return;
+      }
+      // ~2.4s breathing cycle.
+      const phase = (Math.sin(((now - start) / 2400) * Math.PI * 2) + 1) / 2;
+      map.setPaintProperty(SELECTED_LINE_LAYER, 'line-width', 1.6 + phase * 2.2);
+      map.setPaintProperty(SELECTED_LINE_LAYER, 'line-opacity', 0.55 + phase * 0.45);
+      map.setPaintProperty(SELECTED_LINE_LAYER, 'line-blur', 0.2 + phase * 1.4);
+      map.setPaintProperty(SELECTED_FILL_LAYER, 'fill-opacity', 0.06 + phase * 0.07);
+      this.pulseFrame = requestAnimationFrame(tick);
+    };
+    this.pulseFrame = requestAnimationFrame(tick);
+  }
+
+  private stopPulse(): void {
+    if (this.pulseFrame !== null) {
+      cancelAnimationFrame(this.pulseFrame);
+      this.pulseFrame = null;
+    }
   }
 
   /** Hide the base style's name labels for excluded countries. */

@@ -24,7 +24,8 @@ import {
 } from '../../core/models/insights.model';
 import { AskHistoryMessage, AskService } from '../../core/services/ask.service';
 import { InsightsService } from '../../core/services/insights.service';
-import { Silhouette, SilhouetteService } from '../../core/services/silhouette.service';
+import { extractFlagAccent } from '../../core/util/flag-accent';
+import { areaComparison, populationComparison, StatComparison } from '../../core/util/comparisons';
 
 const POLL_INTERVAL_MS = 3000;
 const POLL_MAX_ATTEMPTS = 30; // give up after ~90s
@@ -103,7 +104,6 @@ class AiContent<T> {
 export class CountryPanel {
   private readonly insightsService = inject(InsightsService);
   private readonly askService = inject(AskService);
-  private readonly silhouetteService = inject(SilhouetteService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly country = input<CountryDetail | null>(null);
@@ -141,22 +141,25 @@ export class CountryPanel {
     () => this.country()?.alpha2_code,
   );
 
-  readonly silhouette = signal<Silhouette | null>(null);
+  /** Flag-derived accent (CSS color) — falls back to Marsad gold. */
+  readonly accent = signal<string | null>(null);
 
   constructor() {
     effect(() => {
       const c = this.country();
       this.resetChat();
-      this.silhouette.set(null);
+      this.accent.set(null);
       if (c) {
         this.insights.start(c.alpha2_code);
         this.culture.start(c.alpha2_code);
         this.emblems.start(c.alpha2_code);
-        void this.silhouetteService.getSilhouette(c.alpha3_code).then((s) => {
-          if (this.country()?.alpha3_code === c.alpha3_code) {
-            this.silhouette.set(s);
-          }
-        });
+        if (c.flag_png) {
+          void extractFlagAccent(c.flag_png).then((color) => {
+            if (this.country()?.alpha2_code === c.alpha2_code) {
+              this.accent.set(color);
+            }
+          });
+        }
       } else {
         this.insights.reset();
         this.culture.reset();
@@ -231,6 +234,18 @@ export class CountryPanel {
 
   visibleBorders(country: CountryDetail): string[] {
     return country.borders.filter((code) => !this.excludedCodes().includes(code.toUpperCase()));
+  }
+
+  regionClass(country: CountryDetail): string {
+    return 'region-' + (country.region ?? 'world').toLowerCase().replace(/\s+/g, '-');
+  }
+
+  populationCompare(country: CountryDetail): StatComparison | null {
+    return country.population ? populationComparison(country.population, country.name) : null;
+  }
+
+  areaCompare(country: CountryDetail): StatComparison | null {
+    return country.area ? areaComparison(country.area, country.name) : null;
   }
 
   languageList(country: CountryDetail): string {

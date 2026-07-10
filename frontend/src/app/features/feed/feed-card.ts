@@ -39,6 +39,12 @@ export class FeedCard {
     return this.facts()[this.index()] ?? null;
   }
 
+  /** Single-item list so @for re-creates the node per fact (replays the swap animation). */
+  get currentAsList(): FeedFact[] {
+    const fact = this.current;
+    return fact ? [fact] : [];
+  }
+
   toggle(): void {
     this.open.update((v) => !v);
     if (this.open() && this.state() === 'idle') {

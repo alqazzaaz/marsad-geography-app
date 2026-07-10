@@ -20,9 +20,11 @@
         <p class="feed-fact">…</p>
       }
       @case ('ready') {
-        @if (current; as fact) {
-          <p class="feed-country">{{ fact.country_name }}</p>
-          <p class="feed-fact">{{ fact.fact }}</p>
+        @for (fact of currentAsList; track fact.id) {
+          <div class="fact-swap">
+            <p class="feed-country">{{ fact.country_name }}</p>
+            <p class="feed-fact">{{ fact.fact }}</p>
+          </div>
         }
       }
     }
