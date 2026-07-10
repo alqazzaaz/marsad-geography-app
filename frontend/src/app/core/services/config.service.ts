@@ -1,4 +1,5 @@
-import { HttpClient } from '@angular/common/http';
+﻿import { HttpClient } from '@angular/common/http';
+import { api } from '../api';
 import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 
@@ -16,7 +17,7 @@ export class ConfigService {
   private config: ClientConfig | null = null;
 
   async load(): Promise<ClientConfig> {
-    this.config ??= await firstValueFrom(this.http.get<ClientConfig>('/api/config'));
+    this.config ??= await firstValueFrom(this.http.get<ClientConfig>(api('/api/config')));
     return this.config;
   }
 }

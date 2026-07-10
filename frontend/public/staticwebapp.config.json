@@ -1,0 +1,9 @@
+{
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": ["/*.{js,css,svg,png,ico,json,webmanifest}", "/mapbox-gl-csp-worker.js"]
+  },
+  "mimeTypes": {
+    ".json": "application/json"
+  }
+}

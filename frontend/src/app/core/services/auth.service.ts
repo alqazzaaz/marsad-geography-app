@@ -1,4 +1,5 @@
-import { HttpClient } from '@angular/common/http';
+﻿import { HttpClient } from '@angular/common/http';
+import { api } from '../api';
 import { Injectable, inject, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 
@@ -15,7 +16,7 @@ export class AuthService {
   constructor() {
     if (this.token) {
       // Restore the session; a stale/expired token just logs the user out.
-      this.http.get<User>('/api/auth/me').subscribe({
+      this.http.get<User>(api('/api/auth/me')).subscribe({
         next: (user) => this.currentUser.set(user),
         error: () => this.logout(),
       });
@@ -28,7 +29,7 @@ export class AuthService {
 
   register(email: string, displayName: string, password: string): Observable<TokenResponse> {
     return this.http
-      .post<TokenResponse>('/api/auth/register', {
+      .post<TokenResponse>(api('/api/auth/register'), {
         email,
         display_name: displayName,
         password,
@@ -38,7 +39,7 @@ export class AuthService {
 
   login(email: string, password: string): Observable<TokenResponse> {
     return this.http
-      .post<TokenResponse>('/api/auth/login', { email, password })
+      .post<TokenResponse>(api('/api/auth/login'), { email, password })
       .pipe(tap((res) => this.storeSession(res)));
   }
 

@@ -7,6 +7,7 @@ repository root for the full list of required variables.
 
 from functools import lru_cache
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -23,6 +24,10 @@ class Settings(BaseSettings):
     cors_origins: str = "http://localhost:4200"
 
     # --- PostgreSQL ---
+    # In production, set DATABASE_URL directly (e.g. a Neon connection
+    # string) and the individual POSTGRES_* values are ignored. Locally,
+    # leave it empty and the URL is assembled from the pieces below.
+    database_url_env: str = Field("", validation_alias="DATABASE_URL")
     postgres_host: str = "localhost"
     postgres_port: int = 5432
     postgres_user: str = "marsad"
@@ -85,6 +90,14 @@ class Settings(BaseSettings):
 
     @property
     def database_url(self) -> str:
+        if self.database_url_env:
+            # Normalize provider connection strings (e.g. Neon) for the
+            # SQLAlchemy asyncpg dialect: scheme + TLS parameter naming.
+            url = self.database_url_env
+            url = url.replace("postgres://", "postgresql://", 1)
+            url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
+            url = url.replace("sslmode=", "ssl=")
+            return url
         return (
             f"postgresql+asyncpg://{self.postgres_user}:{self.postgres_password}"
             f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"

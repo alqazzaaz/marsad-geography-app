@@ -1,0 +1,49 @@
+# Marsad backend — Azure Container Apps specification.
+# Apply with:  az containerapp update -n marsad-api -g marsad-rg --yaml infra/containerapp.yaml
+#
+# THE configuration file for backend scaling and runtime environment.
+# Secret VALUES are never in this file — they live as Container Apps secrets
+# (az containerapp secret set ...); this spec references them by name.
+properties:
+  configuration:
+    ingress:
+      external: true
+      targetPort: 8000
+      transport: auto
+    secrets: []  # values managed via `az containerapp secret set` — see infra/DEPLOYMENT.md
+  template:
+    containers:
+      - name: marsad-api
+        image: ghcr.io/alqazzaaz/marsad-api:latest
+        resources:
+          cpu: 0.25
+          memory: 0.5Gi
+        env:
+          - name: ENVIRONMENT
+            value: production
+          - name: DATABASE_URL
+            secretRef: database-url
+          - name: REDIS_URL
+            secretRef: redis-url
+          - name: ANTHROPIC_API_KEY
+            secretRef: anthropic-api-key
+          - name: MAPBOX_ACCESS_TOKEN
+            secretRef: mapbox-access-token
+          - name: JWT_SECRET_KEY
+            secretRef: jwt-secret-key
+          - name: SENTRY_DSN
+            secretRef: sentry-dsn
+          - name: CORS_ORIGINS
+            value: https://marsad.alqazzaaz.com
+          - name: MAP_EXCLUDED_COUNTRIES
+            value: IL,ISR
+          - name: MAP_PROMOTED_COUNTRIES
+            value: PS,PSE
+    scale:
+      # ── THE ONE-LINE TOGGLE ─────────────────────────────────────────────
+      # 0 = free tier, scales to zero when idle (cold start on first hit).
+      # 1 = always warm (paid). Change this line + re-apply, nothing else.
+      minReplicas: 0
+      # Single replica: the AI worker runs in-process; >1 would duplicate
+      # Claude generations. Raise only after adding a distributed job lock.
+      maxReplicas: 1

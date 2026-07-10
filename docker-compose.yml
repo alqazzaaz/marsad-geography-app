@@ -35,7 +35,10 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-marsad}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-marsad}
       POSTGRES_DB: ${POSTGRES_DB:-marsad}
-      REDIS_URL: redis://redis:6379/0
+      # Local containers by default; point at Neon/Upstash by setting these
+      # in .env (production uses Container Apps env vars instead of compose).
+      DATABASE_URL: ${DATABASE_URL:-}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
       CORS_ORIGINS: http://localhost:4200,http://localhost:8080
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       MAPBOX_ACCESS_TOKEN: ${MAPBOX_ACCESS_TOKEN:-}

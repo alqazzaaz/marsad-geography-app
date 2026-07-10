@@ -1,4 +1,4 @@
-import { HttpInterceptorFn } from '@angular/common/http';
+﻿import { HttpInterceptorFn } from '@angular/common/http';
 
 /**
  * Attaches the JWT to API requests when a session exists.
@@ -7,7 +7,7 @@ import { HttpInterceptorFn } from '@angular/common/http';
  */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const token = localStorage.getItem('marsad_token');
-  if (token && req.url.startsWith('/api/')) {
+  if (token && req.url.includes('/api/')) {
     return next(req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }));
   }
   return next(req);

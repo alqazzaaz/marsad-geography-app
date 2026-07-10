@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+﻿import { Injectable } from '@angular/core';
+import { api } from '../api';
 
 export interface AskHistoryMessage {
   role: 'user' | 'assistant';
@@ -27,7 +28,7 @@ export class AskService {
     let response: Response;
     try {
       const token = localStorage.getItem('marsad_token');
-      response = await fetch(`/api/countries/${code}/ask`, {
+      response = await fetch(api(`/api/countries/${code}/ask`), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
