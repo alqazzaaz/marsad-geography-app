@@ -548,14 +548,13 @@
   }
 }
 
-/* --- Ambient life: the gold hairlines breathe very slowly --- */
-@keyframes hairline-breathe {
-  0%,
-  100% {
-    border-top-color: rgba(201, 162, 75, 0.14);
+/* --- Ambient life: a soft golden light travels along every hairline --- */
+@keyframes hairline-shimmer {
+  0% {
+    background-position: 200% 0;
   }
-  50% {
-    border-top-color: rgba(201, 162, 75, 0.4);
+  100% {
+    background-position: -200% 0;
   }
 }
 
@@ -563,7 +562,44 @@
 .borders,
 .insights,
 .ask-dock {
-  animation: hairline-breathe 7s ease-in-out infinite;
+  border-top: none !important;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      rgba(201, 162, 75, 0.12) 0%,
+      rgba(201, 162, 75, 0.12) 35%,
+      rgba(217, 185, 108, 0.85) 50%,
+      rgba(201, 162, 75, 0.12) 65%,
+      rgba(201, 162, 75, 0.12) 100%
+    );
+    background-size: 200% 100%;
+    animation: hairline-shimmer 8s ease-in-out infinite;
+  }
+}
+
+/* Stagger the sections so the lights don't march in unison. */
+.borders::before {
+  animation-delay: 1.4s;
+}
+.insights::before {
+  animation-delay: 2.8s;
+}
+.insights.emblems::before {
+  animation-delay: 4.2s;
+}
+.insights.culture::before {
+  animation-delay: 5.6s;
+}
+.ask-dock::before {
+  animation-delay: 0.7s;
 }
 
 /* --- Ask the Observatory (country Q&A) --- */

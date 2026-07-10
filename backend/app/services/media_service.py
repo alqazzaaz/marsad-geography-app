@@ -11,7 +11,6 @@ Everything is cached in the same Redis -> PostgreSQL pipeline as AI content
 
 import logging
 from typing import Any
-from urllib.parse import quote
 
 import httpx
 
@@ -32,30 +31,18 @@ def simple_name(name: str) -> str:
 async def fetch_banner(country_name: str) -> str | None:
     """Wide hero image for a country page, or None.
 
-    Order: Wikidata P948 (the purpose-made Wikivoyage page banner) ->
-    Wikidata P18 (representative image) -> Wikipedia page image, always
-    filtering out flags/maps/heraldry.
+    ONLY Wikidata P948 — the human-curated Wikivoyage page banner — is used.
+    No fuzzy fallbacks: a missing banner beats a wrong one.
     """
     name = simple_name(country_name)
     async with httpx.AsyncClient(headers=HEADERS, timeout=TIMEOUT) as client:
         qid = await _wikidata_entity(client, name)
-        if qid:
-            for prop in ("P948", "P18"):
-                filename = await _wikidata_image_claim(client, qid, prop)
-                if filename and _is_scenic(filename):
-                    url = await _commons_url(client, filename)
-                    if url:
-                        return url
-        return await _wikipedia_image(client, name)
-
-
-# Page images that are cartography/heraldry, not scenery.
-_NON_SCENIC = ("flag", "map", "coat", "emblem", "locator", "orthographic", "globe", "seal")
-
-
-def _is_scenic(url: str) -> bool:
-    lowered = url.lower()
-    return not any(term in lowered for term in _NON_SCENIC)
+        if not qid:
+            return None
+        filename = await _wikidata_image_claim(client, qid, "P948")
+        if not filename:
+            return None
+        return await _commons_url(client, filename)
 
 
 async def _wikidata_entity(client: httpx.AsyncClient, name: str) -> str | None:
@@ -121,51 +108,41 @@ async def _commons_url(client: httpx.AsyncClient, filename: str) -> str | None:
     return None
 
 
-async def _wikipedia_image(client: httpx.AsyncClient, name: str) -> str | None:
-    try:
-        response = await client.get(
-            f"https://en.wikipedia.org/api/rest_v1/page/summary/{quote(name)}"
-        )
-        data = response.json()
-        image = data.get("originalimage") or data.get("thumbnail")
-        if image and _is_scenic(image.get("source", "")):
-            return image["source"]
-        return None
-    except (httpx.HTTPError, ValueError, KeyError):
-        logger.warning("Wikipedia image lookup failed for %s", name)
-        return None
-
-
 async def enrich_emblems_with_images(
     emblems: list[dict[str, Any]], country_name: str
 ) -> list[dict[str, Any]]:
-    """Attach a Wikipedia search thumbnail to each emblem (best effort)."""
-    country = simple_name(country_name)
+    """Attach each emblem's Wikipedia page image, by EXACT article title.
+
+    Claude supplies the canonical article title (wikipedia_title) when it is
+    confident one exists; we never search. No title, or no page image → no
+    image. A missing photo beats a wrong one.
+    """
     async with httpx.AsyncClient(headers=HEADERS, timeout=TIMEOUT) as client:
         for emblem in emblems:
-            term = emblem.get("name", "").split("(")[0].strip()
-            emblem["image_url"] = await _search_thumbnail(client, f"{term} {country}") or (
-                await _search_thumbnail(client, term)
+            title = (emblem.get("wikipedia_title") or "").strip()
+            emblem["image_url"] = (
+                await _page_thumbnail(client, title) if title else None
             )
     return emblems
 
 
-async def _search_thumbnail(client: httpx.AsyncClient, query: str) -> str | None:
+async def _page_thumbnail(client: httpx.AsyncClient, title: str) -> str | None:
     try:
         response = await client.get(
             "https://en.wikipedia.org/w/api.php",
             params={
                 "action": "query",
                 "format": "json",
-                "generator": "search",
-                "gsrsearch": query,
-                "gsrlimit": 1,
+                "titles": title,
+                "redirects": 1,
                 "prop": "pageimages",
                 "pithumbsize": 500,
             },
         )
         pages = response.json().get("query", {}).get("pages", {})
-        for page in pages.values():
+        for page_id, page in pages.items():
+            if page_id == "-1":  # page does not exist
+                continue
             thumbnail = page.get("thumbnail")
             if thumbnail:
                 return thumbnail["source"]

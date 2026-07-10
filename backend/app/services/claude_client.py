@@ -153,8 +153,9 @@ EMBLEMS_SCHEMA: dict[str, Any] = {
                         "enum": ["Attire", "Cuisine", "Music & Dance", "Symbol", "Craft", "Tradition"],
                     },
                     "description": {"type": "string"},
+                    "wikipedia_title": {"type": "string"},
                 },
-                "required": ["name", "local_name", "category", "description"],
+                "required": ["name", "local_name", "category", "description", "wikipedia_title"],
                 "additionalProperties": False,
             },
         },
@@ -168,9 +169,12 @@ things locals recognize instantly as their own: a garment, a dish, an instrument
 a national symbol, a craft, or a living tradition. Choose across different categories.
 
 For each: name (in English), local_name (in the local language/script; repeat the name if \
-identical), category, and a description of 1–2 sharp sentences saying what it is and why it \
-matters. No generic items that could belong to any country in the region — pick things with \
-a genuinely {country_name} identity where possible."""
+identical), category, a description of 1–2 sharp sentences saying what it is and why it \
+matters, and wikipedia_title — the EXACT title of the English Wikipedia article about this \
+specific item (e.g. "Keffiyeh", "Mansaf", "Dabke"). Only give a title you are confident \
+exists and is about exactly this item; otherwise use an empty string. No generic items that \
+could belong to any country in the region — pick things with a genuinely {country_name} \
+identity where possible."""
 
 FEED_SCHEMA: dict[str, Any] = {
     "type": "object",
