@@ -53,6 +53,45 @@
   padding: 4.5rem 1.6rem 6rem;
 }
 
+/* --- Entrance: the story rises into view --- */
+@keyframes story-rise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.masthead {
+  animation: story-rise 0.5s ease both;
+}
+
+.hero,
+.chapter,
+.closing {
+  opacity: 0;
+  animation: story-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.hero {
+  animation-delay: 0.15s;
+}
+.chapter:nth-of-type(2) {
+  animation-delay: 0.45s;
+}
+.chapter:nth-of-type(3) {
+  animation-delay: 0.65s;
+}
+.chapter:nth-of-type(4) {
+  animation-delay: 0.85s;
+}
+.closing {
+  animation-delay: 1.05s;
+}
+
 /* --- Hero --- */
 .hero {
   text-align: center;
@@ -185,6 +224,14 @@ blockquote {
     font-size: 1.5rem;
     font-style: italic;
     color: var(--text-100);
+  }
+
+  .credit {
+    margin: 3.2rem 0 0;
+    color: var(--text-500);
+    font-size: 0.78rem;
+    font-style: italic;
+    letter-spacing: 0.04em;
   }
 
   .enter-btn {
