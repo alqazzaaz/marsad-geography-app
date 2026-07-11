@@ -178,29 +178,54 @@ export class MapPage implements AfterViewInit, OnDestroy {
     setTimeout(() => this.welcomeVisible.set(false), 900);
   }
 
-  /** Golden dawn: the atmosphere flares gold and the stars surge, then settle. */
+  /**
+   * Golden dawn: two quick shimmering pulses of champagne-gold light around
+   * the atmosphere — deep amber at the rim, near-white at the peaks — then
+   * a long graceful decay back to night.
+   */
   private flashGoldenDawn(): void {
     const map = this.map;
     if (!map || !this.styleLoaded || this.themeService.theme() !== 'night') {
       return;
     }
     const start = performance.now();
-    const duration = 3400;
+    const duration = 4600;
+    // Color waypoints: night steel-blue -> deep amber -> champagne white-gold.
+    const night = [28, 36, 54];
+    const amber = [186, 132, 58];
+    const champagne = [246, 228, 186];
+    const lerp = (a: number[], b: number[], k: number) =>
+      a.map((v, i) => Math.round(v + (b[i] - v) * k));
+
     const tick = (now: number) => {
       if (!this.map) {
         return;
       }
       const t = Math.min((now - start) / duration, 1);
-      const wave = Math.sin(t * Math.PI); // swell, then fade
+
+      // Envelope: fast rise, long eased decay.
+      const env =
+        t < 0.08 ? t / 0.08 : Math.pow(1 - (t - 0.08) / 0.92, 1.7);
+      // Two quick shimmer pulses riding the first 60% of the envelope,
+      // then the oscillation stills and the glow simply breathes out.
+      const pulsePhase = Math.min(t / 0.6, 1);
+      const shimmer =
+        pulsePhase < 1 ? 0.62 + 0.38 * Math.abs(Math.sin(pulsePhase * Math.PI * 2)) : 0.62;
+      const glow = env * shimmer;
+
+      // Two-stage color: rim warms to amber first, whitens near the peaks.
+      const rgb =
+        glow < 0.5
+          ? lerp(night, amber, glow / 0.5)
+          : lerp(amber, champagne, (glow - 0.5) / 0.5);
       map.setFog({
-        color: 'rgba(11, 15, 23, 0.9)',
-        // night high-color rgb(28,36,54) -> gold rgb(201,162,75) and back
-        'high-color': `rgba(${Math.round(28 + wave * 173)}, ${Math.round(
-          36 + wave * 126,
-        )}, ${Math.round(54 + wave * 21)}, ${0.6 + wave * 0.3})`,
+        color: `rgba(${Math.round(11 + glow * 14)}, ${Math.round(15 + glow * 10)}, ${Math.round(
+          23 + glow * 2,
+        )}, 0.9)`,
+        'high-color': `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${0.6 + glow * 0.35})`,
         'space-color': '#070a10',
-        'horizon-blend': 0.04 + wave * 0.06,
-        'star-intensity': 0.35 + wave * 0.5,
+        'horizon-blend': 0.04 + glow * 0.075,
+        'star-intensity': 0.35 + glow * 0.55,
       });
       if (t < 1) {
         requestAnimationFrame(tick);
