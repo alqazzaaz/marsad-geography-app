@@ -141,6 +141,8 @@ jobs:
       - name: Apply container app spec (port, env, scaling)
         if: steps.gate.outputs.enabled == 'true'
         run: |
+          az config set extension.use_dynamic_install=yes_without_prompt
+          az extension add --name containerapp --upgrade
           az containerapp update -n marsad-backend -g marsad-rg \
             --yaml infra/containerapp.yaml
       - name: Roll out new revision

@@ -4,13 +4,14 @@
 # THE configuration file for backend scaling and runtime environment.
 # Secret VALUES are never in this file - they live as Container Apps secrets
 # (az containerapp secret set ...); this spec references them by name.
+# NOTE: no `secrets:` key here on purpose — omitting it preserves the
+# secrets set via portal/CLI. An explicit empty list would DELETE them.
 properties:
   configuration:
     ingress:
       external: true
       targetPort: 8000
       transport: auto
-    secrets: []  # values managed via `az containerapp secret set` - see infra/DEPLOYMENT.md
   template:
     containers:
       - name: marsad-backend
@@ -34,7 +35,7 @@ properties:
           - name: SENTRY_DSN
             secretRef: sentry-dsn
           - name: CORS_ORIGINS
-            value: https://marsad.alqazzaaz.com
+            value: https://marsad.alqazzaaz.com,https://zealous-tree-091326110.7.azurestaticapps.net
           - name: MAP_EXCLUDED_COUNTRIES
             value: IL,ISR
           - name: MAP_PROMOTED_COUNTRIES
