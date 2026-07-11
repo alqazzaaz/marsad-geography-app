@@ -24,6 +24,7 @@
 
 .panel {
   --accent: #c9a24b;
+  overflow-x: hidden;
   position: relative;
   height: 100%;
   display: flex;
@@ -48,9 +49,18 @@
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  /* Vertical scroll only — anything wider than the narrow phone panel
+     must wrap or shrink, never introduce a sideways scroll. */
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
   padding: 2.5rem 2rem 1.5rem;
   position: relative;
   z-index: 1;
+
+  > * {
+    max-width: 100%;
+    min-width: 0;
+  }
 }
 
 /* --- Q&A dock, always visible at the bottom --- */
