@@ -1,0 +1,35 @@
+# Rotates the backend's JWT signing secret. The new value is generated on
+# the runner, masked, written straight to the Container App, and never
+# stored anywhere else. Existing sessions are invalidated (users sign in
+# again); no other behavior changes.
+#
+# Trigger manually: Actions -> "Rotate JWT secret" -> Run workflow.
+
+name: Rotate JWT secret
+
+on:
+  workflow_dispatch:
+
+jobs:
+  rotate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Set a fresh secret and restart
+        run: |
+          az config set extension.use_dynamic_install=yes_without_prompt
+          az extension add --name containerapp --upgrade
+          NEW_SECRET=$(openssl rand -hex 48)
+          echo "::add-mask::$NEW_SECRET"
+          az containerapp secret set -n marsad-backend -g marsad-rg \
+            --secrets jwt-secret-key="$NEW_SECRET"
+          # Secrets are read at container start — restart the active revision.
+          REVISION=$(az containerapp revision list -n marsad-backend -g marsad-rg \
+            --query "[?properties.active].name | [0]" -o tsv)
+          az containerapp revision restart -n marsad-backend -g marsad-rg \
+            --revision "$REVISION"
+          echo "JWT secret rotated and revision $REVISION restarted."

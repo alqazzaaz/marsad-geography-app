@@ -19,18 +19,14 @@ jobs:
           cache-dependency-path: backend/requirements.txt
       - name: Install dependencies
         run: |
-          pip install -r backend/requirements.txt
-          pip install flake8 pytest
+          pip install -r backend/requirements-dev.txt
+          pip install flake8
       - name: Syntax check (flake8)
         # E9/F63/F7/F82 = real errors (syntax, undefined names) -- not style nits
         run: flake8 backend/app --select=E9,F63,F7,F82 --show-source
-      - name: Run tests (if any)
-        run: |
-          if [ -d backend/tests ]; then
-            pytest backend/tests -v
-          else
-            echo "No backend tests yet -- skipping."
-          fi
+      - name: Run tests
+        working-directory: backend
+        run: pytest -v
 
   frontend:
     name: Frontend (Angular)
