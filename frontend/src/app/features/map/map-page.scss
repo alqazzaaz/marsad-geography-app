@@ -22,9 +22,9 @@
   pointer-events: none;
   background: radial-gradient(
     ellipse at center,
-    transparent 38%,
-    rgba(var(--abyss-rgb), 0.55) 72%,
-    rgba(var(--abyss-rgb), 0.92) 100%
+    transparent 50%,
+    rgba(var(--abyss-rgb), 0.22) 78%,
+    rgba(var(--abyss-rgb), 0.7) 100%
   );
   opacity: 1;
   transition: opacity 3.2s ease 0.5s;
@@ -126,8 +126,8 @@
   justify-content: center;
   background: radial-gradient(
     ellipse at center,
-    rgba(var(--abyss-rgb), 0.55) 0%,
-    rgba(var(--abyss-rgb), 0.82) 100%
+    rgba(var(--abyss-rgb), 0.08) 0%,
+    rgba(var(--abyss-rgb), 0.45) 100%
   );
   animation: welcome-fade-in 1.2s ease both;
 }
@@ -169,6 +169,8 @@
   max-width: 620px;
   padding: 0 2rem;
   text-align: center;
+  /* The veil is light enough to watch the globe spin — anchor the text. */
+  text-shadow: 0 2px 26px rgba(7, 10, 16, 0.85);
 
   > * {
     opacity: 0;

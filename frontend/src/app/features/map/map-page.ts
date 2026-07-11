@@ -160,9 +160,10 @@ export class MapPage implements AfterViewInit, OnDestroy {
     }
     this.playWelcomeAudio();
     this.stopIdleSpin();
-    // The arrival: veil dissolves, vignette lifts, and the camera inherits
-    // the idle spin's momentum for a slow descent onto the world, timed to
-    // the spoken greeting (~5s).
+    // The arrival: veil dissolves, vignette lifts, a golden dawn flares
+    // around the atmosphere, and the camera descends from deep space onto
+    // the world — all timed to the spoken greeting (~5s).
+    this.flashGoldenDawn();
     this.map?.flyTo({
       center: [24, 22],
       zoom: 1.7,
@@ -171,8 +172,42 @@ export class MapPage implements AfterViewInit, OnDestroy {
       curve: 1.25,
       essential: true,
     });
+    this.map?.once('moveend', () => this.map?.setMinZoom(1));
     this.welcomeLeaving.set(true);
     setTimeout(() => this.welcomeVisible.set(false), 900);
+  }
+
+  /** Golden dawn: the atmosphere flares gold and the stars surge, then settle. */
+  private flashGoldenDawn(): void {
+    const map = this.map;
+    if (!map || !this.styleLoaded || this.themeService.theme() !== 'night') {
+      return;
+    }
+    const start = performance.now();
+    const duration = 3400;
+    const tick = (now: number) => {
+      if (!this.map) {
+        return;
+      }
+      const t = Math.min((now - start) / duration, 1);
+      const wave = Math.sin(t * Math.PI); // swell, then fade
+      map.setFog({
+        color: 'rgba(11, 15, 23, 0.9)',
+        // night high-color rgb(28,36,54) -> gold rgb(201,162,75) and back
+        'high-color': `rgba(${Math.round(28 + wave * 173)}, ${Math.round(
+          36 + wave * 126,
+        )}, ${Math.round(54 + wave * 21)}, ${0.6 + wave * 0.3})`,
+        'space-color': '#070a10',
+        'horizon-blend': 0.04 + wave * 0.06,
+        'star-intensity': 0.35 + wave * 0.5,
+      });
+      if (t < 1) {
+        requestAnimationFrame(tick);
+      } else {
+        map.setFog(FOG.night);
+      }
+    };
+    requestAnimationFrame(tick);
   }
 
   /** Slow eastward rotation while the welcome veil is up. */
@@ -300,9 +335,11 @@ export class MapPage implements AfterViewInit, OnDestroy {
       // spin behind the welcome veil, and entering the observatory hands
       // that momentum to the descent (see dismissWelcome).
       center: [-60, 12],
-      zoom: 1,
+      zoom: 0.85,
       bearing: -8,
-      minZoom: 1,
+      // Below the browsing floor for the deep-space opening; restored to 1
+      // when the arrival flight lands (see dismissWelcome).
+      minZoom: 0.85,
       maxZoom: 8,
       attributionControl: true,
     });
