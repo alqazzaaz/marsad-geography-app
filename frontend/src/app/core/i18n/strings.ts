@@ -10,6 +10,8 @@ export const STRINGS = {
   },
   nav: {
     about: 'The Story',
+    toDay: 'Switch to daylight',
+    toNight: 'Switch to night',
   },
   welcome: {
     line1: 'You are now in the Marsad —',

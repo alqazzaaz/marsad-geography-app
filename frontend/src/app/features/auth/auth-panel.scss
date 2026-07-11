@@ -6,7 +6,7 @@
   align-items: center;
   justify-content: center;
   padding: 1.5rem;
-  background: rgba(7, 10, 16, 0.7);
+  background: rgba(var(--abyss-rgb), 0.7);
   backdrop-filter: blur(6px);
   animation: fade-in 0.25s ease;
 }
@@ -97,7 +97,7 @@ label {
     padding: 0.65rem 0.85rem;
     border: 1px solid var(--ink-600);
     border-radius: 8px;
-    background: rgba(7, 10, 16, 0.6);
+    background: rgba(var(--abyss-rgb), 0.6);
     color: var(--text-100);
     font-family: var(--font-body);
     font-size: 0.95rem;

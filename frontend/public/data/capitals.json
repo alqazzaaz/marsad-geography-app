@@ -1,0 +1,1523 @@
+{
+ "AD": [
+  {
+   "name": "Andorra",
+   "lat": 42.5108,
+   "lng": 1.5266
+  }
+ ],
+ "AE": [
+  {
+   "name": "Abu Dhabi",
+   "lat": 24.4667,
+   "lng": 54.3666
+  }
+ ],
+ "AF": [
+  {
+   "name": "Kabul",
+   "lat": 34.5186,
+   "lng": 69.1813
+  }
+ ],
+ "AG": [
+  {
+   "name": "Saint John's",
+   "lat": 17.118,
+   "lng": -61.85
+  }
+ ],
+ "AL": [
+  {
+   "name": "Tirana",
+   "lat": 41.3275,
+   "lng": 19.8189
+  }
+ ],
+ "AM": [
+  {
+   "name": "Yerevan",
+   "lat": 40.1831,
+   "lng": 44.5116
+  }
+ ],
+ "AO": [
+  {
+   "name": "Luanda",
+   "lat": -8.8363,
+   "lng": 13.2325
+  }
+ ],
+ "AR": [
+  {
+   "name": "Buenos Aires",
+   "lat": -34.6107,
+   "lng": -58.4325
+  }
+ ],
+ "AT": [
+  {
+   "name": "Vienna",
+   "lat": 48.202,
+   "lng": 16.3647
+  }
+ ],
+ "AU": [
+  {
+   "name": "Canberra",
+   "lat": -35.283,
+   "lng": 149.129
+  }
+ ],
+ "AW": [
+  {
+   "name": "Oranjestad",
+   "lat": 12.5227,
+   "lng": -70.0358
+  }
+ ],
+ "AZ": [
+  {
+   "name": "Baku",
+   "lat": 40.3972,
+   "lng": 49.8603
+  }
+ ],
+ "BA": [
+  {
+   "name": "Sarajevo",
+   "lat": 43.85,
+   "lng": 18.383
+  }
+ ],
+ "BB": [
+  {
+   "name": "Bridgetown",
+   "lat": 13.102,
+   "lng": -59.6165
+  }
+ ],
+ "BD": [
+  {
+   "name": "Dhaka",
+   "lat": 23.725,
+   "lng": 90.4066
+  }
+ ],
+ "BE": [
+  {
+   "name": "Brussels",
+   "lat": 50.8353,
+   "lng": 4.3314
+  }
+ ],
+ "BF": [
+  {
+   "name": "Ouagadougou",
+   "lat": 12.3723,
+   "lng": -1.5267
+  }
+ ],
+ "BG": [
+  {
+   "name": "Sofia",
+   "lat": 42.6853,
+   "lng": 23.3147
+  }
+ ],
+ "BH": [
+  {
+   "name": "Manama",
+   "lat": 26.2361,
+   "lng": 50.5831
+  }
+ ],
+ "BI": [
+  {
+   "name": "Gitega",
+   "lat": -3.4271,
+   "lng": 29.9246
+  },
+  {
+   "name": "Bujumbura",
+   "lat": -3.3761,
+   "lng": 29.36
+  }
+ ],
+ "BJ": [
+  {
+   "name": "Cotonou",
+   "lat": 6.363,
+   "lng": 2.4044
+  },
+  {
+   "name": "Porto-Novo",
+   "lat": 6.4833,
+   "lng": 2.6166
+  }
+ ],
+ "BM": [
+  {
+   "name": "Hamilton",
+   "lat": 32.2949,
+   "lng": -64.7831
+  }
+ ],
+ "BN": [
+  {
+   "name": "Bandar Seri Begawan",
+   "lat": 4.8833,
+   "lng": 114.9333
+  }
+ ],
+ "BO": [
+  {
+   "name": "Sucre",
+   "lat": -19.041,
+   "lng": -65.2595
+  },
+  {
+   "name": "La Paz",
+   "lat": -16.496,
+   "lng": -68.1519
+  }
+ ],
+ "BR": [
+  {
+   "name": "Brasília",
+   "lat": -15.7814,
+   "lng": -47.918
+  }
+ ],
+ "BS": [
+  {
+   "name": "Nassau",
+   "lat": 25.0834,
+   "lng": -77.35
+  }
+ ],
+ "BT": [
+  {
+   "name": "Thimphu",
+   "lat": 27.473,
+   "lng": 89.639
+  }
+ ],
+ "BW": [
+  {
+   "name": "Gaborone",
+   "lat": -24.6463,
+   "lng": 25.9119
+  }
+ ],
+ "BY": [
+  {
+   "name": "Minsk",
+   "lat": 53.9019,
+   "lng": 27.5647
+  }
+ ],
+ "BZ": [
+  {
+   "name": "Belmopan",
+   "lat": 17.252,
+   "lng": -88.7671
+  }
+ ],
+ "CA": [
+  {
+   "name": "Ottawa",
+   "lat": 45.4186,
+   "lng": -75.702
+  }
+ ],
+ "CD": [
+  {
+   "name": "Kinshasa",
+   "lat": -4.3278,
+   "lng": 15.313
+  }
+ ],
+ "CF": [
+  {
+   "name": "Bangui",
+   "lat": 4.3666,
+   "lng": 18.5583
+  }
+ ],
+ "CG": [
+  {
+   "name": "Brazzaville",
+   "lat": -4.2572,
+   "lng": 15.2827
+  }
+ ],
+ "CH": [
+  {
+   "name": "Bern",
+   "lat": 46.9167,
+   "lng": 7.467
+  }
+ ],
+ "CI": [
+  {
+   "name": "Yamoussoukro",
+   "lat": 6.8184,
+   "lng": -5.2755
+  },
+  {
+   "name": "Abidjan",
+   "lat": 5.3231,
+   "lng": -4.0202
+  }
+ ],
+ "CL": [
+  {
+   "name": "Santiago",
+   "lat": -33.4402,
+   "lng": -70.6505
+  },
+  {
+   "name": "Valparaíso",
+   "lat": -33.0477,
+   "lng": -71.617
+  }
+ ],
+ "CM": [
+  {
+   "name": "Yaoundé",
+   "lat": 3.8686,
+   "lng": 11.5147
+  }
+ ],
+ "CN": [
+  {
+   "name": "Beijing",
+   "lat": 39.9017,
+   "lng": 116.3942
+  }
+ ],
+ "CO": [
+  {
+   "name": "Bogota",
+   "lat": 4.5984,
+   "lng": -74.0853
+  }
+ ],
+ "CR": [
+  {
+   "name": "San José",
+   "lat": 9.9304,
+   "lng": -84.0788
+  }
+ ],
+ "CU": [
+  {
+   "name": "Havana",
+   "lat": 23.1339,
+   "lng": -82.3661
+  }
+ ],
+ "CV": [
+  {
+   "name": "Praia",
+   "lat": 14.9167,
+   "lng": -23.5167
+  }
+ ],
+ "CW": [
+  {
+   "name": "Willemstad",
+   "lat": 12.1091,
+   "lng": -68.9316
+  }
+ ],
+ "CY": [
+  {
+   "name": "Nicosia",
+   "lat": 35.1667,
+   "lng": 33.3666
+  }
+ ],
+ "CZ": [
+  {
+   "name": "Prague",
+   "lat": 50.087,
+   "lng": 14.4229
+  }
+ ],
+ "DE": [
+  {
+   "name": "Berlin",
+   "lat": 52.5238,
+   "lng": 13.3996
+  }
+ ],
+ "DJ": [
+  {
+   "name": "Djibouti",
+   "lat": 11.595,
+   "lng": 43.148
+  }
+ ],
+ "DK": [
+  {
+   "name": "København",
+   "lat": 55.6805,
+   "lng": 12.5615
+  }
+ ],
+ "DM": [
+  {
+   "name": "Roseau",
+   "lat": 15.301,
+   "lng": -61.387
+  }
+ ],
+ "DO": [
+  {
+   "name": "Santo Domingo",
+   "lat": 18.4707,
+   "lng": -69.9297
+  }
+ ],
+ "DZ": [
+  {
+   "name": "Algiers",
+   "lat": 36.765,
+   "lng": 3.0486
+  }
+ ],
+ "EC": [
+  {
+   "name": "Quito",
+   "lat": -0.213,
+   "lng": -78.502
+  }
+ ],
+ "EE": [
+  {
+   "name": "Tallinn",
+   "lat": 59.4339,
+   "lng": 24.728
+  }
+ ],
+ "EG": [
+  {
+   "name": "Cairo",
+   "lat": 30.0519,
+   "lng": 31.248
+  }
+ ],
+ "EH": [
+  {
+   "name": "El Aaiún",
+   "lat": 27.1536,
+   "lng": -13.2033
+  }
+ ],
+ "ER": [
+  {
+   "name": "Asmara",
+   "lat": 15.3333,
+   "lng": 38.9333
+  }
+ ],
+ "ES": [
+  {
+   "name": "Madrid",
+   "lat": 40.402,
+   "lng": -3.6853
+  }
+ ],
+ "ET": [
+  {
+   "name": "Addis Ababa",
+   "lat": 9.0353,
+   "lng": 38.6981
+  }
+ ],
+ "FI": [
+  {
+   "name": "Helsinki",
+   "lat": 60.1638,
+   "lng": 24.9325
+  }
+ ],
+ "FJ": [
+  {
+   "name": "Suva",
+   "lat": -18.133,
+   "lng": 178.4417
+  }
+ ],
+ "FM": [
+  {
+   "name": "Palikir",
+   "lat": 6.9166,
+   "lng": 158.15
+  }
+ ],
+ "FO": [
+  {
+   "name": "Tórshavn",
+   "lat": 62.0079,
+   "lng": -6.7906
+  }
+ ],
+ "FR": [
+  {
+   "name": "Paris",
+   "lat": 48.8581,
+   "lng": 2.353
+  }
+ ],
+ "GA": [
+  {
+   "name": "Libreville",
+   "lat": 0.3854,
+   "lng": 9.458
+  }
+ ],
+ "GB": [
+  {
+   "name": "London",
+   "lat": 51.5019,
+   "lng": -0.1187
+  }
+ ],
+ "GD": [
+  {
+   "name": "Saint George's",
+   "lat": 12.0526,
+   "lng": -61.7416
+  }
+ ],
+ "GE": [
+  {
+   "name": "Tbilisi",
+   "lat": 41.727,
+   "lng": 44.7888
+  }
+ ],
+ "GH": [
+  {
+   "name": "Accra",
+   "lat": 5.552,
+   "lng": -0.2187
+  }
+ ],
+ "GI": [
+  {
+   "name": "Gibraltar",
+   "lat": 36.1408,
+   "lng": -5.3536
+  }
+ ],
+ "GL": [
+  {
+   "name": "Nuuk",
+   "lat": 64.1748,
+   "lng": -51.7381
+  }
+ ],
+ "GM": [
+  {
+   "name": "Banjul",
+   "lat": 13.4539,
+   "lng": -16.5917
+  }
+ ],
+ "GN": [
+  {
+   "name": "Conakry",
+   "lat": 9.5335,
+   "lng": -13.6822
+  }
+ ],
+ "GQ": [
+  {
+   "name": "Malabo",
+   "lat": 3.75,
+   "lng": 8.7833
+  }
+ ],
+ "GR": [
+  {
+   "name": "Athens",
+   "lat": 37.9853,
+   "lng": 23.7314
+  }
+ ],
+ "GT": [
+  {
+   "name": "Guatemala City",
+   "lat": 14.6231,
+   "lng": -90.5289
+  }
+ ],
+ "GW": [
+  {
+   "name": "Bissau",
+   "lat": 11.865,
+   "lng": -15.5984
+  }
+ ],
+ "GY": [
+  {
+   "name": "Georgetown",
+   "lat": 6.802,
+   "lng": -58.167
+  }
+ ],
+ "HK": [
+  {
+   "name": "Hong Kong",
+   "lat": 22.3193,
+   "lng": 114.1694
+  }
+ ],
+ "HN": [
+  {
+   "name": "Tegucigalpa",
+   "lat": 14.104,
+   "lng": -87.2195
+  }
+ ],
+ "HR": [
+  {
+   "name": "Zagreb",
+   "lat": 45.8,
+   "lng": 16
+  }
+ ],
+ "HT": [
+  {
+   "name": "Port-au-Prince",
+   "lat": 18.543,
+   "lng": -72.338
+  }
+ ],
+ "HU": [
+  {
+   "name": "Budapest",
+   "lat": 47.502,
+   "lng": 19.0814
+  }
+ ],
+ "ID": [
+  {
+   "name": "Jakarta",
+   "lat": -6.1725,
+   "lng": 106.8275
+  }
+ ],
+ "IE": [
+  {
+   "name": "Dublin",
+   "lat": 53.3467,
+   "lng": -6.257
+  }
+ ],
+ "IL": [
+  {
+   "name": "Jerusalem",
+   "lat": 31.7784,
+   "lng": 35.2066
+  }
+ ],
+ "IN": [
+  {
+   "name": "New Delhi",
+   "lat": 28.6,
+   "lng": 77.2
+  }
+ ],
+ "IQ": [
+  {
+   "name": "Baghdad",
+   "lat": 33.3406,
+   "lng": 44.3919
+  }
+ ],
+ "IR": [
+  {
+   "name": "Tehran",
+   "lat": 35.6739,
+   "lng": 51.4224
+  }
+ ],
+ "IS": [
+  {
+   "name": "Reykjavík",
+   "lat": 64.1435,
+   "lng": -21.9365
+  }
+ ],
+ "IT": [
+  {
+   "name": "Rome",
+   "lat": 41.8979,
+   "lng": 12.4813
+  }
+ ],
+ "JM": [
+  {
+   "name": "Kingston",
+   "lat": 17.9771,
+   "lng": -76.7674
+  }
+ ],
+ "JO": [
+  {
+   "name": "Amman",
+   "lat": 31.952,
+   "lng": 35.9314
+  }
+ ],
+ "JP": [
+  {
+   "name": "Tokyo",
+   "lat": 35.687,
+   "lng": 139.7495
+  }
+ ],
+ "KE": [
+  {
+   "name": "Nairobi",
+   "lat": -1.2814,
+   "lng": 36.8147
+  }
+ ],
+ "KG": [
+  {
+   "name": "Bishkek",
+   "lat": 42.875,
+   "lng": 74.5833
+  }
+ ],
+ "KH": [
+  {
+   "name": "Phnom Penh",
+   "lat": 11.552,
+   "lng": 104.9147
+  }
+ ],
+ "KI": [
+  {
+   "name": "Tarawa",
+   "lat": 1.3382,
+   "lng": 173.0176
+  }
+ ],
+ "KM": [
+  {
+   "name": "Moroni",
+   "lat": -11.7042,
+   "lng": 43.2402
+  }
+ ],
+ "KN": [
+  {
+   "name": "Basseterre",
+   "lat": 17.302,
+   "lng": -62.717
+  }
+ ],
+ "KP": [
+  {
+   "name": "Pyongyang",
+   "lat": 39.0214,
+   "lng": 125.7527
+  }
+ ],
+ "KR": [
+  {
+   "name": "Seoul",
+   "lat": 37.5683,
+   "lng": 126.9978
+  }
+ ],
+ "KW": [
+  {
+   "name": "Kuwait City",
+   "lat": 29.3717,
+   "lng": 47.9764
+  }
+ ],
+ "KZ": [
+  {
+   "name": "Astana",
+   "lat": 51.1811,
+   "lng": 71.4278
+  }
+ ],
+ "LA": [
+  {
+   "name": "Vientiane",
+   "lat": 17.9667,
+   "lng": 102.6
+  }
+ ],
+ "LB": [
+  {
+   "name": "Beirut",
+   "lat": 33.8739,
+   "lng": 35.5078
+  }
+ ],
+ "LC": [
+  {
+   "name": "Castries",
+   "lat": 14.0079,
+   "lng": -60.9929
+  }
+ ],
+ "LI": [
+  {
+   "name": "Vaduz",
+   "lat": 47.1337,
+   "lng": 9.5167
+  }
+ ],
+ "LK": [
+  {
+   "name": "Colombo",
+   "lat": 6.932,
+   "lng": 79.8578
+  },
+  {
+   "name": "Sri Jayawardenepura Kotte",
+   "lat": 6.9,
+   "lng": 79.95
+  }
+ ],
+ "LR": [
+  {
+   "name": "Monrovia",
+   "lat": 6.3146,
+   "lng": -10.7997
+  }
+ ],
+ "LS": [
+  {
+   "name": "Maseru",
+   "lat": -29.3167,
+   "lng": 27.4833
+  }
+ ],
+ "LT": [
+  {
+   "name": "Vilnius",
+   "lat": 54.6834,
+   "lng": 25.3166
+  }
+ ],
+ "LU": [
+  {
+   "name": "Luxembourg",
+   "lat": 49.6117,
+   "lng": 6.13
+  }
+ ],
+ "LV": [
+  {
+   "name": "Riga",
+   "lat": 56.95,
+   "lng": 24.1
+  }
+ ],
+ "LY": [
+  {
+   "name": "Tripoli",
+   "lat": 32.8925,
+   "lng": 13.18
+  }
+ ],
+ "MA": [
+  {
+   "name": "Rabat",
+   "lat": 34.0253,
+   "lng": -6.8364
+  }
+ ],
+ "MC": [
+  {
+   "name": "Monaco",
+   "lat": 43.7396,
+   "lng": 7.4069
+  }
+ ],
+ "MD": [
+  {
+   "name": "Chișinău",
+   "lat": 47.005,
+   "lng": 28.8577
+  }
+ ],
+ "ME": [
+  {
+   "name": "Podgorica",
+   "lat": 42.466,
+   "lng": 19.2663
+  }
+ ],
+ "MG": [
+  {
+   "name": "Antananarivo",
+   "lat": -18.9147,
+   "lng": 47.5147
+  }
+ ],
+ "MH": [
+  {
+   "name": "Majuro",
+   "lat": 7.103,
+   "lng": 171.38
+  }
+ ],
+ "MK": [
+  {
+   "name": "Skopje",
+   "lat": 42,
+   "lng": 21.4335
+  }
+ ],
+ "ML": [
+  {
+   "name": "Bamako",
+   "lat": 12.652,
+   "lng": -8.002
+  }
+ ],
+ "MM": [
+  {
+   "name": "Naypyidaw",
+   "lat": 19.7685,
+   "lng": 96.1167
+  }
+ ],
+ "MN": [
+  {
+   "name": "Ulaanbaatar",
+   "lat": 47.9186,
+   "lng": 106.9147
+  }
+ ],
+ "MO": [
+  {
+   "name": "Macau",
+   "lat": 22.1987,
+   "lng": 113.5439
+  }
+ ],
+ "MR": [
+  {
+   "name": "Nouakchott",
+   "lat": 18.0864,
+   "lng": -15.9753
+  }
+ ],
+ "MT": [
+  {
+   "name": "Valletta",
+   "lat": 35.8997,
+   "lng": 14.5147
+  }
+ ],
+ "MU": [
+  {
+   "name": "Port Louis",
+   "lat": -20.1666,
+   "lng": 57.5
+  }
+ ],
+ "MV": [
+  {
+   "name": "Malé",
+   "lat": 4.172,
+   "lng": 73.5089
+  }
+ ],
+ "MW": [
+  {
+   "name": "Lilongwe",
+   "lat": -13.9833,
+   "lng": 33.7833
+  }
+ ],
+ "MX": [
+  {
+   "name": "Mexico City",
+   "lat": 19.4444,
+   "lng": -99.1329
+  }
+ ],
+ "MY": [
+  {
+   "name": "Kuala Lumpur",
+   "lat": 3.1398,
+   "lng": 101.6887
+  },
+  {
+   "name": "Putrajaya",
+   "lat": 2.9325,
+   "lng": 101.695
+  }
+ ],
+ "MZ": [
+  {
+   "name": "Maputo",
+   "lat": -25.9533,
+   "lng": 32.5872
+  }
+ ],
+ "NA": [
+  {
+   "name": "Windhoek",
+   "lat": -22.57,
+   "lng": 17.0835
+  }
+ ],
+ "NC": [
+  {
+   "name": "Nouméa",
+   "lat": -22.2735,
+   "lng": 166.4481
+  }
+ ],
+ "NE": [
+  {
+   "name": "Niamey",
+   "lat": 13.5187,
+   "lng": 2.1147
+  }
+ ],
+ "NG": [
+  {
+   "name": "Abuja",
+   "lat": 9.0546,
+   "lng": 7.4895
+  }
+ ],
+ "NI": [
+  {
+   "name": "Managua",
+   "lat": 12.155,
+   "lng": -86.2704
+  }
+ ],
+ "NL": [
+  {
+   "name": "Amsterdam",
+   "lat": 52.3519,
+   "lng": 4.9147
+  },
+  {
+   "name": "The Hague",
+   "lat": 52.08,
+   "lng": 4.27
+  }
+ ],
+ "NO": [
+  {
+   "name": "Oslo",
+   "lat": 59.9186,
+   "lng": 10.748
+  }
+ ],
+ "NP": [
+  {
+   "name": "Kathmandu",
+   "lat": 27.7186,
+   "lng": 85.3147
+  }
+ ],
+ "NZ": [
+  {
+   "name": "Wellington",
+   "lat": -41.2921,
+   "lng": 174.7772
+  }
+ ],
+ "OM": [
+  {
+   "name": "Muscat",
+   "lat": 23.5852,
+   "lng": 58.3783
+  }
+ ],
+ "PA": [
+  {
+   "name": "Panama City",
+   "lat": 8.97,
+   "lng": -79.535
+  }
+ ],
+ "PE": [
+  {
+   "name": "Lima",
+   "lat": -12.0461,
+   "lng": -77.052
+  }
+ ],
+ "PF": [
+  {
+   "name": "Papeete",
+   "lat": -17.5334,
+   "lng": -149.5667
+  }
+ ],
+ "PG": [
+  {
+   "name": "Port Moresby",
+   "lat": -9.4647,
+   "lng": 147.1925
+  }
+ ],
+ "PH": [
+  {
+   "name": "Manila",
+   "lat": 14.6061,
+   "lng": 120.9803
+  }
+ ],
+ "PK": [
+  {
+   "name": "Islamabad",
+   "lat": 33.6894,
+   "lng": 73.0806
+  }
+ ],
+ "PL": [
+  {
+   "name": "Warsaw",
+   "lat": 52.2309,
+   "lng": 21.0053
+  }
+ ],
+ "PR": [
+  {
+   "name": "San Juan",
+   "lat": 18.4655,
+   "lng": -66.1057
+  }
+ ],
+ "PS": [
+  {
+   "name": "Jerusalem",
+   "lat": 31.7784,
+   "lng": 35.2066
+  },
+  {
+   "name": "Ramallah",
+   "lat": 31.9038,
+   "lng": 35.2034
+  }
+ ],
+ "PT": [
+  {
+   "name": "Lisbon",
+   "lat": 38.7247,
+   "lng": -9.1468
+  }
+ ],
+ "PW": [
+  {
+   "name": "Melekeok",
+   "lat": 7.4874,
+   "lng": 134.6265
+  }
+ ],
+ "PY": [
+  {
+   "name": "Asunción",
+   "lat": -25.2907,
+   "lng": -57.6258
+  }
+ ],
+ "QA": [
+  {
+   "name": "Doha",
+   "lat": 25.2866,
+   "lng": 51.533
+  }
+ ],
+ "RO": [
+  {
+   "name": "Bucharest",
+   "lat": 44.4353,
+   "lng": 26.098
+  }
+ ],
+ "RS": [
+  {
+   "name": "Belgrade",
+   "lat": 44.8206,
+   "lng": 20.466
+  }
+ ],
+ "RU": [
+  {
+   "name": "Moscow",
+   "lat": 55.7541,
+   "lng": 37.6136
+  }
+ ],
+ "RW": [
+  {
+   "name": "Kigali",
+   "lat": -1.9516,
+   "lng": 30.0586
+  }
+ ],
+ "SA": [
+  {
+   "name": "Riyadh",
+   "lat": 24.6345,
+   "lng": 46.7205
+  }
+ ],
+ "SB": [
+  {
+   "name": "Honiara",
+   "lat": -9.438,
+   "lng": 159.9498
+  }
+ ],
+ "SC": [
+  {
+   "name": "Victoria",
+   "lat": -4.6166,
+   "lng": 55.45
+  }
+ ],
+ "SD": [
+  {
+   "name": "Khartoum",
+   "lat": 15.59,
+   "lng": 32.5322
+  }
+ ],
+ "SE": [
+  {
+   "name": "Stockholm",
+   "lat": 59.3241,
+   "lng": 18.0663
+  }
+ ],
+ "SG": [
+  {
+   "name": "Singapore",
+   "lat": 1.295,
+   "lng": 103.8539
+  }
+ ],
+ "SI": [
+  {
+   "name": "Ljubljana",
+   "lat": 46.0553,
+   "lng": 14.515
+  }
+ ],
+ "SK": [
+  {
+   "name": "Bratislava",
+   "lat": 48.15,
+   "lng": 17.117
+  }
+ ],
+ "SL": [
+  {
+   "name": "Freetown",
+   "lat": 8.472,
+   "lng": -13.2362
+  }
+ ],
+ "SM": [
+  {
+   "name": "San Marino",
+   "lat": 43.9361,
+   "lng": 12.4418
+  }
+ ],
+ "SN": [
+  {
+   "name": "Dakar",
+   "lat": 14.7178,
+   "lng": -17.4751
+  }
+ ],
+ "SO": [
+  {
+   "name": "Mogadishu",
+   "lat": 2.0686,
+   "lng": 45.3647
+  }
+ ],
+ "SR": [
+  {
+   "name": "Paramaribo",
+   "lat": 5.835,
+   "lng": -55.167
+  }
+ ],
+ "SS": [
+  {
+   "name": "Juba",
+   "lat": 4.83,
+   "lng": 31.58
+  }
+ ],
+ "ST": [
+  {
+   "name": "São Tomé",
+   "lat": 0.3375,
+   "lng": 6.7297
+  }
+ ],
+ "SV": [
+  {
+   "name": "San Salvador",
+   "lat": 13.7033,
+   "lng": -89.2156
+  }
+ ],
+ "SY": [
+  {
+   "name": "Damascus",
+   "lat": 33.502,
+   "lng": 36.2981
+  }
+ ],
+ "SZ": [
+  {
+   "name": "Mbabane",
+   "lat": -26.3167,
+   "lng": 31.1333
+  },
+  {
+   "name": "Lobamba",
+   "lat": -26.4667,
+   "lng": 31.2
+  }
+ ],
+ "TD": [
+  {
+   "name": "N'Djamena",
+   "lat": 12.115,
+   "lng": 15.0472
+  }
+ ],
+ "TG": [
+  {
+   "name": "Lomé",
+   "lat": 6.1339,
+   "lng": 1.2208
+  }
+ ],
+ "TH": [
+  {
+   "name": "Bangkok",
+   "lat": 13.7519,
+   "lng": 100.5147
+  }
+ ],
+ "TJ": [
+  {
+   "name": "Dushanbe",
+   "lat": 38.56,
+   "lng": 68.7739
+  }
+ ],
+ "TL": [
+  {
+   "name": "Dili",
+   "lat": -8.5594,
+   "lng": 125.5795
+  }
+ ],
+ "TM": [
+  {
+   "name": "Ashgabat",
+   "lat": 37.95,
+   "lng": 58.3833
+  }
+ ],
+ "TN": [
+  {
+   "name": "Tunis",
+   "lat": 36.8028,
+   "lng": 10.1797
+  }
+ ],
+ "TO": [
+  {
+   "name": "Nuku'alofa",
+   "lat": -21.1385,
+   "lng": -175.2206
+  }
+ ],
+ "TR": [
+  {
+   "name": "Ankara",
+   "lat": 39.9292,
+   "lng": 32.8624
+  }
+ ],
+ "TT": [
+  {
+   "name": "Port-of-Spain",
+   "lat": 10.652,
+   "lng": -61.517
+  }
+ ],
+ "TV": [
+  {
+   "name": "Funafuti",
+   "lat": -8.5167,
+   "lng": 179.2166
+  }
+ ],
+ "TW": [
+  {
+   "name": "Taipei",
+   "lat": 25.0358,
+   "lng": 121.5683
+  }
+ ],
+ "TZ": [
+  {
+   "name": "Dar es Salaam",
+   "lat": -6.7981,
+   "lng": 39.2664
+  },
+  {
+   "name": "Dodoma",
+   "lat": -6.1833,
+   "lng": 35.75
+  }
+ ],
+ "UA": [
+  {
+   "name": "Kyiv",
+   "lat": 50.4353,
+   "lng": 30.5147
+  }
+ ],
+ "UG": [
+  {
+   "name": "Kampala",
+   "lat": 0.3186,
+   "lng": 32.5814
+  }
+ ],
+ "US": [
+  {
+   "name": "Washington, D.C.",
+   "lat": 38.9015,
+   "lng": -77.0114
+  }
+ ],
+ "UY": [
+  {
+   "name": "Montevideo",
+   "lat": -34.9054,
+   "lng": -56.1868
+  }
+ ],
+ "UZ": [
+  {
+   "name": "Tashkent",
+   "lat": 41.3038,
+   "lng": 69.2688
+  }
+ ],
+ "VA": [
+  {
+   "name": "Vatican City",
+   "lat": 41.9033,
+   "lng": 12.4534
+  }
+ ],
+ "VC": [
+  {
+   "name": "Kingstown",
+   "lat": 13.1558,
+   "lng": -61.2202
+  }
+ ],
+ "VE": [
+  {
+   "name": "Caracas",
+   "lat": 10.5029,
+   "lng": -66.919
+  }
+ ],
+ "VN": [
+  {
+   "name": "Hanoi",
+   "lat": 21.0353,
+   "lng": 105.8481
+  }
+ ],
+ "VU": [
+  {
+   "name": "Port Vila",
+   "lat": -17.7334,
+   "lng": 168.3166
+  }
+ ],
+ "WS": [
+  {
+   "name": "Apia",
+   "lat": -13.8357,
+   "lng": -171.7686
+  }
+ ],
+ "XK": [
+  {
+   "name": "Pristina",
+   "lat": 42.6667,
+   "lng": 21.166
+  }
+ ],
+ "YE": [
+  {
+   "name": "Sanaa",
+   "lat": 15.3567,
+   "lng": 44.2046
+  }
+ ],
+ "ZA": [
+  {
+   "name": "Bloemfontein",
+   "lat": -29.12,
+   "lng": 26.2299
+  },
+  {
+   "name": "Pretoria",
+   "lat": -25.705,
+   "lng": 28.2275
+  },
+  {
+   "name": "Cape Town",
+   "lat": -33.9181,
+   "lng": 18.433
+  }
+ ],
+ "ZM": [
+  {
+   "name": "Lusaka",
+   "lat": -15.4147,
+   "lng": 28.2814
+  }
+ ],
+ "ZW": [
+  {
+   "name": "Harare",
+   "lat": -17.8158,
+   "lng": 31.0428
+  }
+ ]
+}

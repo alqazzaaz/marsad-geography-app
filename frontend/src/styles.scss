@@ -2,7 +2,7 @@
 @use "mapbox-gl/dist/mapbox-gl.css";
 
 :root {
-  /* Palette — midnight observatory with gold accents */
+  /* Palette — midnight observatory with gold accents (night theme) */
   --ink-900: #070a10;
   --ink-800: #0b0f17;
   --ink-700: #121826;
@@ -14,10 +14,30 @@
   --text-300: #cfc9bc;
   --text-500: #948e80;
 
+  /* Translucent surface channels — rgba(var(--surface-rgb), a) etc. */
+  --surface-rgb: 11, 15, 23; /* ink-800 */
+  --abyss-rgb: 7, 10, 16; /* ink-900 */
+
   /* Typography */
   --font-display: "Cormorant Garamond", "Times New Roman", serif;
   --font-body: "Inter", system-ui, sans-serif;
   --font-arabic: "Amiri", serif;
+}
+
+/* Daylight theme — warm parchment, ink text, deeper gold for contrast */
+body.theme-day {
+  --ink-900: #e9e3d3;
+  --ink-800: #f4efe2;
+  --ink-700: #ece5d3;
+  --ink-600: #d8cfb8;
+  --gold-500: #b08a34;
+  --gold-400: #9a7628;
+  --gold-300: #7e5f1e;
+  --text-100: #2b2620;
+  --text-300: #574f3f;
+  --text-500: #8a8170;
+  --surface-rgb: 244, 239, 226;
+  --abyss-rgb: 233, 227, 211;
 }
 
 * {

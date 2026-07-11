@@ -51,13 +51,18 @@ class CountryDetail(CountrySummary):
     flag_svg: str | None = None
 
 
+# Curated corrections applied on top of the upstream payload.
+CAPITAL_OVERRIDES = {"PS": "Jerusalem"}
+
+
 def _base_fields(raw: dict[str, Any]) -> dict[str, Any]:
     flags = raw.get("flags") or {}
+    alpha2 = raw["alpha2Code"]
     return {
-        "alpha2_code": raw["alpha2Code"],
+        "alpha2_code": alpha2,
         "alpha3_code": raw["alpha3Code"],
         "name": raw["name"],
-        "capital": raw.get("capital"),
+        "capital": CAPITAL_OVERRIDES.get(alpha2, raw.get("capital")),
         "region": raw.get("region"),
         "flag_emoji": raw.get("flag"),
         "flag_png": flags.get("png"),

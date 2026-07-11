@@ -75,7 +75,7 @@
   padding: 0.45rem 1.1rem;
   border: 1px solid rgba(201, 162, 75, 0.4);
   border-radius: 999px;
-  background: rgba(11, 15, 23, 0.75);
+  background: rgba(var(--surface-rgb), 0.75);
   backdrop-filter: blur(10px);
   color: var(--text-300);
   font-size: 0.75rem;
@@ -90,6 +90,12 @@
   }
 }
 
+.theme-btn {
+  padding: 0.45rem 0.85rem;
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
 /* --- Welcome moment --- */
 .welcome {
   position: absolute;
@@ -100,8 +106,8 @@
   justify-content: center;
   background: radial-gradient(
     ellipse at center,
-    rgba(7, 10, 16, 0.55) 0%,
-    rgba(7, 10, 16, 0.82) 100%
+    rgba(var(--abyss-rgb), 0.55) 0%,
+    rgba(var(--abyss-rgb), 0.82) 100%
   );
   animation: welcome-fade-in 1.2s ease both;
 }
@@ -232,7 +238,7 @@
   padding: 0.7rem 1.3rem;
   border: 1px solid rgba(201, 162, 75, 0.35);
   border-radius: 999px;
-  background: rgba(11, 15, 23, 0.85);
+  background: rgba(var(--surface-rgb), 0.85);
   backdrop-filter: blur(10px);
   animation: welcome-fade-in 0.8s ease both;
 
@@ -280,7 +286,7 @@
     padding: 1.6rem 2rem;
     border: 1px solid rgba(201, 162, 75, 0.3);
     border-radius: 10px;
-    background: rgba(11, 15, 23, 0.92);
+    background: rgba(var(--surface-rgb), 0.92);
     color: var(--text-300);
     font-size: 0.95rem;
     line-height: 1.6;

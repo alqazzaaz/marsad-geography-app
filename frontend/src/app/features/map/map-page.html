@@ -8,6 +8,15 @@
   </header>
 
   <div class="account" [class.tucked]="panelOpen()">
+    <button
+      class="account-btn theme-btn"
+      type="button"
+      (click)="toggleTheme()"
+      [attr.aria-label]="themeService.theme() === 'night' ? t.nav.toDay : t.nav.toNight"
+      [attr.title]="themeService.theme() === 'night' ? t.nav.toDay : t.nav.toNight"
+    >
+      {{ themeService.theme() === 'night' ? '☀' : '☾' }}
+    </button>
     <a class="account-btn" routerLink="/about">{{ t.nav.about }}</a>
     @if (auth.currentUser(); as user) {
       <span class="account-name">{{ user.display_name }}</span>

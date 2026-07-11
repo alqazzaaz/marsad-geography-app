@@ -15,6 +15,7 @@ import { CountryDetail } from '../../core/models/country.model';
 import { AuthService } from '../../core/services/auth.service';
 import { ConfigService } from '../../core/services/config.service';
 import { CountryService } from '../../core/services/country.service';
+import { Theme, ThemeService } from '../../core/services/theme.service';
 import { AuthPanel } from '../auth/auth-panel';
 import { CountryPanel } from '../country/country-panel';
 import { FeedCard } from '../feed/feed-card';
@@ -27,7 +28,45 @@ const PROMOTED_LABEL_SOURCE = 'marsad-promoted-labels';
 const PROMOTED_LABEL_LAYER = 'marsad-promoted-label-layer';
 const SELECTED_FILL_LAYER = 'marsad-selected-fill';
 const SELECTED_LINE_LAYER = 'marsad-selected-line';
+const CAPITAL_SOURCE = 'marsad-capitals';
+const CAPITAL_GLOW_LAYER = 'marsad-capital-glow';
+const CAPITAL_DOT_LAYER = 'marsad-capital-dot';
 const NO_SELECTION_FILTER: mapboxgl.FilterSpecification = ['==', ['get', 'iso_3166_1'], '__none__'];
+
+const MAP_STYLES: Record<Theme, string> = {
+  night: 'mapbox://styles/mapbox/dark-v11',
+  day: 'mapbox://styles/mapbox/light-v11',
+};
+
+const FOG: Record<Theme, mapboxgl.FogSpecification> = {
+  night: {
+    color: 'rgba(11, 15, 23, 0.9)',
+    'high-color': 'rgba(28, 36, 54, 0.6)',
+    'space-color': '#070a10',
+    'horizon-blend': 0.04,
+    'star-intensity': 0.35,
+  },
+  day: {
+    color: 'rgba(244, 239, 226, 0.9)',
+    'high-color': 'rgba(190, 205, 225, 0.5)',
+    'space-color': '#d9e2ee',
+    'horizon-blend': 0.06,
+    'star-intensity': 0,
+  },
+};
+
+// Promoted-country labels copy the base style's own country-label paint so
+// they are indistinguishable from neighbours — per style.
+const PROMOTED_LABEL_PAINT: Record<Theme, { color: string; halo: string }> = {
+  night: { color: 'hsl(0, 0%, 40%)', halo: 'hsl(0, 0%, 3%)' },
+  day: { color: 'hsl(0, 0%, 35%)', halo: 'hsl(0, 0%, 98%)' },
+};
+
+interface Capital {
+  name: string;
+  lat: number;
+  lng: number;
+}
 
 /**
  * Which polygons are interactive, honoring the configurable worldview:
@@ -58,14 +97,17 @@ export class MapPage implements AfterViewInit, OnDestroy {
   private readonly configService = inject(ConfigService);
   private readonly countryService = inject(CountryService);
   readonly auth = inject(AuthService);
+  readonly themeService = inject(ThemeService);
 
   private readonly mapContainer = viewChild.required<ElementRef<HTMLDivElement>>('mapContainer');
 
   private map: mapboxgl.Map | null = null;
   private hoveredCountryId: string | number | null = null;
   private styleLoaded = false;
+  private handlersBound = false;
   private pulseFrame: number | null = null;
   private selected: { a2: string; a3: string } | null = null;
+  private capitals: Record<string, Capital[]> | null = null;
   excluded: string[] = [];
   private promoted: string[] = [];
 
@@ -84,6 +126,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
   readonly countryError = signal(false);
 
   async ngAfterViewInit(): Promise<void> {
+    void this.loadCapitals();
     try {
       const config = await this.configService.load();
       if (!config.mapbox_token) {
@@ -107,6 +150,14 @@ export class MapPage implements AfterViewInit, OnDestroy {
 
   dismissWelcome(): void {
     this.welcomeVisible.set(false);
+  }
+
+  toggleTheme(): void {
+    const theme = this.themeService.toggle();
+    if (this.map && this.styleLoaded) {
+      // style.load re-adds all Marsad layers and restores the selection.
+      this.map.setStyle(MAP_STYLES[theme]);
+    }
   }
 
   closePanel(): void {
@@ -164,7 +215,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
 
     this.map = new mapboxgl.Map({
       container: this.mapContainer().nativeElement,
-      style: 'mapbox://styles/mapbox/dark-v11',
+      style: MAP_STYLES[this.themeService.theme()],
       projection: 'globe',
       center: [24, 22],
       zoom: 1.7,
@@ -188,14 +239,12 @@ export class MapPage implements AfterViewInit, OnDestroy {
       this.styleLoaded = true;
       this.mapError.set(false);
       this.mapLoading.set(false);
-      this.map!.setFog({
-        color: 'rgba(11, 15, 23, 0.9)',
-        'high-color': 'rgba(28, 36, 54, 0.6)',
-        'space-color': '#070a10',
-        'horizon-blend': 0.04,
-        'star-intensity': 0.35,
-      });
+      this.map!.setFog(FOG[this.themeService.theme()]);
       this.addCountryLayers();
+      // A theme switch replaces the whole style — restore the open selection.
+      if (this.selected) {
+        this.highlightSelection(this.selected.a2, this.selected.a3);
+      }
     });
 
     // First interaction with the globe dissolves the welcome overlay.
@@ -268,8 +317,43 @@ export class MapPage implements AfterViewInit, OnDestroy {
       },
     });
 
+    // Capital pulse dots: empty until a country is selected.
+    map.addSource(CAPITAL_SOURCE, {
+      type: 'geojson',
+      data: { type: 'FeatureCollection', features: [] },
+    });
+    map.addLayer({
+      id: CAPITAL_GLOW_LAYER,
+      type: 'circle',
+      source: CAPITAL_SOURCE,
+      paint: {
+        'circle-color': '#c9a24b',
+        'circle-radius': 10,
+        'circle-blur': 1.2,
+        'circle-opacity': 0.4,
+      },
+    });
+    map.addLayer({
+      id: CAPITAL_DOT_LAYER,
+      type: 'circle',
+      source: CAPITAL_SOURCE,
+      paint: {
+        'circle-color': '#f3d9a4',
+        'circle-radius': 3.2,
+        'circle-stroke-color': '#c9a24b',
+        'circle-stroke-width': 1.2,
+      },
+    });
+
     this.applyWorldviewToBaseLabels();
     void this.addPromotedLabels();
+
+    // Delegated listeners live on the map object, not the layer — bind them
+    // once or a theme switch (style reload) would stack duplicates.
+    if (this.handlersBound) {
+      return;
+    }
+    this.handlersBound = true;
 
     map.on('mousemove', FILL_LAYER, (event) => {
       const feature = event.features?.[0];
@@ -323,7 +407,41 @@ export class MapPage implements AfterViewInit, OnDestroy {
     ];
     map.setFilter(SELECTED_FILL_LAYER, filter);
     map.setFilter(SELECTED_LINE_LAYER, filter);
+    this.updateCapitalDots(alpha2);
     this.startPulse();
+  }
+
+  /** Point the capital source at the selected country's capital(s). */
+  private updateCapitalDots(alpha2: string): void {
+    const map = this.map;
+    if (!map || !map.getSource(CAPITAL_SOURCE)) {
+      return;
+    }
+    const entries = this.capitals?.[alpha2.toUpperCase()] ?? [];
+    (map.getSource(CAPITAL_SOURCE) as mapboxgl.GeoJSONSource).setData({
+      type: 'FeatureCollection',
+      features: entries.map((cap) => ({
+        type: 'Feature',
+        properties: { name: cap.name },
+        geometry: { type: 'Point', coordinates: [cap.lng, cap.lat] },
+      })),
+    });
+  }
+
+  /** Capitals with exact coordinates: static Natural Earth-derived dataset. */
+  private async loadCapitals(): Promise<void> {
+    try {
+      const res = await fetch('/data/capitals.json');
+      if (res.ok) {
+        this.capitals = await res.json();
+        // The dataset may arrive after the first country was selected.
+        if (this.selected) {
+          this.updateCapitalDots(this.selected.a2);
+        }
+      }
+    } catch {
+      // No dots is graceful — selection highlight still works without them.
+    }
   }
 
   private clearSelection(): void {
@@ -333,6 +451,12 @@ export class MapPage implements AfterViewInit, OnDestroy {
     if (map?.getLayer(SELECTED_LINE_LAYER)) {
       map.setFilter(SELECTED_FILL_LAYER, NO_SELECTION_FILTER);
       map.setFilter(SELECTED_LINE_LAYER, NO_SELECTION_FILTER);
+    }
+    if (map?.getSource(CAPITAL_SOURCE)) {
+      (map.getSource(CAPITAL_SOURCE) as mapboxgl.GeoJSONSource).setData({
+        type: 'FeatureCollection',
+        features: [],
+      });
     }
   }
 
@@ -350,6 +474,10 @@ export class MapPage implements AfterViewInit, OnDestroy {
       map.setPaintProperty(SELECTED_LINE_LAYER, 'line-opacity', 0.55 + phase * 0.45);
       map.setPaintProperty(SELECTED_LINE_LAYER, 'line-blur', 0.2 + phase * 1.4);
       map.setPaintProperty(SELECTED_FILL_LAYER, 'fill-opacity', 0.06 + phase * 0.07);
+      if (map.getLayer(CAPITAL_GLOW_LAYER)) {
+        map.setPaintProperty(CAPITAL_GLOW_LAYER, 'circle-radius', 8 + phase * 8);
+        map.setPaintProperty(CAPITAL_GLOW_LAYER, 'circle-opacity', 0.25 + phase * 0.4);
+      }
       this.pulseFrame = requestAnimationFrame(tick);
     };
     this.pulseFrame = requestAnimationFrame(tick);
@@ -451,8 +579,8 @@ export class MapPage implements AfterViewInit, OnDestroy {
         'text-transform': 'none',
       },
       paint: {
-        'text-color': 'hsl(0, 0%, 40%)',
-        'text-halo-color': 'hsl(0, 0%, 3%)',
+        'text-color': PROMOTED_LABEL_PAINT[this.themeService.theme()].color,
+        'text-halo-color': PROMOTED_LABEL_PAINT[this.themeService.theme()].halo,
         'text-halo-width': 1.25,
       },
     });

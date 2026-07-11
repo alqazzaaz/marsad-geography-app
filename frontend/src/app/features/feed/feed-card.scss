@@ -17,7 +17,7 @@
   padding: 0.6rem 1.2rem;
   border: 1px solid rgba(201, 162, 75, 0.4);
   border-radius: 999px;
-  background: rgba(11, 15, 23, 0.85);
+  background: rgba(var(--surface-rgb), 0.85);
   backdrop-filter: blur(10px);
   color: var(--text-300);
   font-family: var(--font-display);
@@ -82,7 +82,7 @@
   padding: 1.2rem 1.4rem 1rem;
   border: 1px solid rgba(201, 162, 75, 0.3);
   border-radius: 14px;
-  background: linear-gradient(160deg, rgba(11, 15, 23, 0.94), rgba(7, 10, 16, 0.97));
+  background: linear-gradient(160deg, rgba(var(--surface-rgb), 0.94), rgba(var(--abyss-rgb), 0.97));
   backdrop-filter: blur(14px);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
   animation: feed-rise 0.4s cubic-bezier(0.22, 1, 0.36, 1);
