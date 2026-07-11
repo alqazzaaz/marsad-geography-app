@@ -57,7 +57,8 @@
   position: relative;
   z-index: 1;
 
-  > * {
+  /* The hero deliberately bleeds past the padding — exempt it. */
+  > :not(.hero) {
     max-width: 100%;
     min-width: 0;
   }
@@ -567,6 +568,12 @@
 @media (max-width: 768px) {
   .panel-body {
     padding: 1.8rem 1.1rem 1.2rem;
+  }
+
+  /* Keep the hero's bleed matched to the tighter padding. */
+  .hero {
+    margin: -1.8rem -1.1rem 1.4rem;
+    height: 180px;
   }
 
   .ask-dock {

@@ -307,15 +307,26 @@ export class MapPage implements AfterViewInit, OnDestroy {
     });
   }
 
+  /** Width of the open panel: clamp(240px, 60vw, 420px), mirrors its CSS. */
+  private panelWidth(): number {
+    return Math.round(Math.min(420, Math.max(240, window.innerWidth * 0.6)));
+  }
+
   private flyToCountry(detail: CountryDetail): void {
     if (!this.map || !detail.latlng || detail.latlng.length !== 2) {
       return;
     }
     const [lat, lng] = detail.latlng;
+    // Center the country in the strip left of the panel; on phones that
+    // strip is narrow, so zoom out further to keep whole countries (and
+    // their capitals) in view.
+    const narrow = window.innerWidth - this.panelWidth() < 420;
     this.map.flyTo({
       center: [lng, lat],
-      zoom: Math.max(this.map.getZoom(), 3.2),
-      padding: { right: 420 },
+      zoom: narrow
+        ? Math.min(Math.max(this.map.getZoom(), 2.2), 3)
+        : Math.max(this.map.getZoom(), 3.2),
+      padding: { right: this.panelWidth() },
       duration: 1800,
       essential: true,
     });
