@@ -97,7 +97,11 @@ settings → set visibility **Public**, then re-run the failed
 `deploy-backend` job. Every subsequent deploy just works.
 
 ### 6. GitHub repo settings (Settings → Secrets and variables → Actions)
-- Secret `AZURE_STATIC_WEB_APPS_API_TOKEN` — from step 4
+- SWA deployment token: **already done** — creating the Static Web App with
+  GitHub integration auto-added the secret
+  `AZURE_STATIC_WEB_APPS_API_TOKEN_ZEALOUS_TREE_091326110`, which the
+  workflow references. (Azure also auto-committed its own workflow file;
+  it was removed — ours handles the deploy with the API URL injected.)
 - Secret `AZURE_CREDENTIALS` — JSON output of:
   ```bash
   az ad sp create-for-rbac --name marsad-deploy --role contributor \
