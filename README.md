@@ -56,6 +56,9 @@ The design goal is that **the same country never triggers a second Claude API ca
 - **Daily budget guard:** Claude usage is metered in USD from real token counts; once the configurable daily ceiling is hit, generation pauses until the next day (`503`)
 - **Observability:** Sentry error tracking in production
 
+## Development Methodology: AI-Assisted Engineering
+This project was developed utilizing Claude Code to massively accelerate the development lifecycle. By offloading UI boilerplate and standard CRUD operations to AI, I was able to dedicate 100% of my cognitive focus to System Design and DevOps—specifically designing the multi-layer caching architecture, configuring the JWT security layer, and orchestrating the serverless Microsoft Azure deployment.
+
 ## Getting Started
 
 ### Prerequisites
