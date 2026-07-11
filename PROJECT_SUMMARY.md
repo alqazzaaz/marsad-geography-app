@@ -115,10 +115,24 @@ test hook, Angular production build, compose build); Sentry integration
   SVG texture overlays, bigger flags.
 - **Prompt tuning** — insights tightened to 2–3 sentences per entry after
   content review; per-kind max-token caps.
+- **Capital pulse dots** — glowing dots on every capital when a country is
+  selected, from a curated Natural Earth-derived static dataset (208
+  countries, multi-capital aware: Bolivia, South Africa, Sri Lanka…) —
+  zero runtime dependencies for unchanging facts.
+- **Daylight theme** — full parchment-and-ink light mode: theme-token CSS
+  architecture, Mapbox style swap with layer restoration, persisted toggle.
+- **A cinematic entrance** — the globe idles in a slow spin behind a light
+  veil; entering hands that momentum to a 5.6-second descent from deep
+  space while a golden dawn flares around the atmosphere, a vignette lifts,
+  and a voice (ElevenLabs, preloaded for instant playback) welcomes the
+  traveler.
+- **Mobile pass** — header actions collapse into a dropdown, the country
+  panel narrows to 60% with the fly-to camera padding computed from the
+  real panel width so countries and their capitals stay in frame.
 
 Rejected along the way (deliberate product decisions): flag-derived accent
 colors, panel silhouette (moved to the map), multi-variant insight caching,
-light theme (parked for later).
+golden shooting stars (built, then cut).
 
 ## 5. Notable Bugs & Lessons
 
@@ -132,6 +146,7 @@ light theme (parked for later).
 | CD deploy wiped Container App secrets | `secrets: []` in a CA YAML spec **deletes** secrets; omit the key to preserve them |
 | Blank globe on the live site only | Azure SWA injects `Referrer-Policy: same-origin`, stripping the Referer that Mapbox URL restrictions validate → override via `staticwebapp.config.json` globalHeaders |
 | Wrong emblem/banner images | Fuzzy image search is unreliable → exact-source lookups only (Wikidata P948; Claude-supplied Wikipedia titles) |
+| "Works on one device, not another" after deploys | Almost always browser cache or deploy timing — verify against production with a headless browser before touching code |
 
 ## 6. Cost Model
 
@@ -141,7 +156,11 @@ light theme (parked for later).
 - Guards: daily USD ceiling (Redis-metered from real token counts, 503 when
   reached), 30 generations/IP/day (429), single backend replica prevents
   duplicate jobs.
-- Full 250-country pre-generation ≈ $15–20 (planned as a final step).
+- **Full-catalog pre-generation: done.** A one-time GitHub Actions run
+  (reading production secrets via Azure, driving Claude from the runner)
+  generated all 249 countries — 726 generations, zero failures, **$11.30
+  total**. Every country on Earth now serves instantly, forever; the lazy
+  path remains as a self-healing fallback.
 
 ## 7. Deployment (all free tiers)
 
@@ -166,18 +185,16 @@ GitHub main ──CI──► CD ──┬─► Azure Static Web Apps ─► ma
 
 ## 8. Current State & Roadmap
 
-**Live:** frontend + backend deployed and connected (Neon/Upstash healthy),
-custom domain with TLS, CI/CD green, Sentry armed, production database
-generating and caching its first countries.
+**Live and complete:** frontend + backend deployed and connected
+(Neon/Upstash healthy), custom domain with TLS, CI/CD green (including a
+22-test backend suite covering the budget guard, rate limiting, cache
+locks, and schema mapping), Sentry armed, JWT secret rotated via a
+zero-exposure workflow, **all 249 countries pre-generated and cached
+permanently**, voice-and-motion entrance, day/night themes, mobile layout.
 
-**Queued next:**
-1. Capital-city glowing pulse dots on selection (multi-capital aware —
-   Bolivia, South Africa, etc.)
-2. Full 250-country pre-generation into production once the Anthropic
-   account is topped up
-3. Parked ideas: daylight theme, favorites/visited countries (auth is
-   ready), city-level exploration, country comparison, quiz mode, i18n
-   (strings already centralized)
+**Parked ideas:** Arabic localization (UI strings already centralized;
+lazy per-language generation designed), favorites/visited countries (auth
+is ready), city-level exploration, country comparison, quiz mode.
 
 ---
 
