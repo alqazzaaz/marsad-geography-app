@@ -19,6 +19,7 @@ import { Theme, ThemeService } from '../../core/services/theme.service';
 import { AuthPanel } from '../auth/auth-panel';
 import { CountryPanel } from '../country/country-panel';
 import { FeedCard } from '../feed/feed-card';
+import { ShootingStars } from './shooting-stars';
 
 const COUNTRY_SOURCE = 'country-boundaries';
 const COUNTRY_SOURCE_LAYER = 'country_boundaries';
@@ -89,7 +90,7 @@ function countryFilter(excluded: string[], promoted: string[]): mapboxgl.FilterS
 
 @Component({
   selector: 'app-map-page',
-  imports: [AuthPanel, CountryPanel, FeedCard, RouterLink],
+  imports: [AuthPanel, CountryPanel, FeedCard, RouterLink, ShootingStars],
   templateUrl: './map-page.html',
   styleUrl: './map-page.scss',
 })
