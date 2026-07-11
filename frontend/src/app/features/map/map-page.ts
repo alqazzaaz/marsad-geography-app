@@ -156,7 +156,9 @@ export class MapPage implements AfterViewInit, OnDestroy {
   }
 
   dismissWelcome(): void {
-    if (!this.welcomeVisible() || this.welcomeLeaving()) {
+    // While the observatory wakes (cold start) the door stays shut —
+    // covers the button, the overlay, and first map interaction alike.
+    if (this.mapLoading() || !this.welcomeVisible() || this.welcomeLeaving()) {
       return;
     }
     this.playWelcomeAudio();

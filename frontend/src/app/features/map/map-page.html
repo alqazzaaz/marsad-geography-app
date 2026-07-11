@@ -56,7 +56,12 @@
         </h1>
         <div class="welcome-rule" aria-hidden="true"></div>
         <p class="welcome-sub">{{ t.welcome.line3 }}</p>
-        <button class="welcome-enter" type="button" (click)="dismissWelcome()">
+        <button
+          class="welcome-enter"
+          type="button"
+          [disabled]="mapLoading()"
+          (click)="dismissWelcome()"
+        >
           {{ t.welcome.enter }}
         </button>
         <p class="welcome-credit">{{ t.welcome.credit }}</p>

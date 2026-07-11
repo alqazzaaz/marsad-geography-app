@@ -317,10 +317,19 @@
   cursor: pointer;
   transition: all 0.3s ease;
 
-  &:hover {
+  &:hover:not(:disabled) {
     background: rgba(201, 162, 75, 0.12);
     border-color: var(--gold-300);
     box-shadow: 0 0 30px rgba(201, 162, 75, 0.18);
+  }
+
+  /* Greyed out while the observatory wakes; re-lights when ready. */
+  &:disabled {
+    opacity: 0.4;
+    border-color: rgba(148, 142, 128, 0.4);
+    color: var(--text-500);
+    cursor: default;
+    transition: all 0.5s ease;
   }
 }
 
