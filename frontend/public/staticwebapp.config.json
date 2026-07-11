@@ -3,6 +3,9 @@
     "rewrite": "/index.html",
     "exclude": ["/*.{js,css,svg,png,ico,json,webmanifest}", "/mapbox-gl-csp-worker.js"]
   },
+  "globalHeaders": {
+    "Referrer-Policy": "strict-origin-when-cross-origin"
+  },
   "mimeTypes": {
     ".json": "application/json"
   }
