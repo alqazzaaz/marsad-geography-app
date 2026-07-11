@@ -38,6 +38,17 @@
         <button class="welcome-enter" type="button" (click)="dismissWelcome()">
           {{ t.welcome.enter }}
         </button>
+        <p class="welcome-credit">{{ t.welcome.credit }}</p>
+      </div>
+    </div>
+  }
+
+  @if (mapLoading() && !tokenMissing() && !mapError()) {
+    <div class="map-loading" role="status">
+      <div class="map-loading-spinner" aria-hidden="true"></div>
+      <div class="map-loading-text">
+        <p>{{ t.map.waking }}</p>
+        <p class="map-loading-hint">{{ t.map.wakingHint }}</p>
       </div>
     </div>
   }

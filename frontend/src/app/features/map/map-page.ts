@@ -73,6 +73,9 @@ export class MapPage implements AfterViewInit, OnDestroy {
 
   readonly tokenMissing = signal(false);
   readonly mapError = signal(false);
+  // True from first paint until the map style has loaded — covers the
+  // backend cold start (scale-to-zero can take ~10-20s on the first visit).
+  readonly mapLoading = signal(true);
   readonly welcomeVisible = signal(true);
   readonly panelOpen = signal(false);
   readonly authOpen = signal(false);
@@ -85,6 +88,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
       const config = await this.configService.load();
       if (!config.mapbox_token) {
         this.tokenMissing.set(true);
+        this.mapLoading.set(false);
         return;
       }
       this.excluded = config.map_excluded ?? [];
@@ -92,6 +96,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
       this.initMap(config.mapbox_token);
     } catch {
       this.mapError.set(true);
+      this.mapLoading.set(false);
     }
   }
 
@@ -175,12 +180,14 @@ export class MapPage implements AfterViewInit, OnDestroy {
       const status = (event.error as { status?: number } | undefined)?.status;
       if (!this.styleLoaded && (status === 401 || status === 403)) {
         this.mapError.set(true);
+        this.mapLoading.set(false);
       }
     });
 
     this.map.on('style.load', () => {
       this.styleLoaded = true;
       this.mapError.set(false);
+      this.mapLoading.set(false);
       this.map!.setFog({
         color: 'rgba(11, 15, 23, 0.9)',
         'high-color': 'rgba(28, 36, 54, 0.6)',

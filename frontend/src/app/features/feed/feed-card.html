@@ -13,7 +13,10 @@
       @case ('loading') {
         <div class="feed-wait">
           <div class="feed-spinner" aria-hidden="true"></div>
-          <p>{{ t.generating }}</p>
+          <div>
+            <p>{{ t.generating }}</p>
+            <p class="feed-wait-hint">{{ t.generatingHint }}</p>
+          </div>
         </div>
       }
       @case ('error') {

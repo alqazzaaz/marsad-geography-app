@@ -16,11 +16,14 @@ export const STRINGS = {
     line2: 'the observatory of the world.',
     line3: 'Choose a country to begin your journey.',
     enter: 'Enter the observatory',
+    credit: 'Created by Abdullah Al-Qazzaz with Claude Code',
   },
   map: {
     tokenMissing:
       'The map needs a Mapbox access token. Add MAPBOX_ACCESS_TOKEN to your .env file and restart the stack.',
     loadError: 'The observatory could not reach the world map. Please try again.',
+    waking: 'Waking the observatory…',
+    wakingHint: 'The first visit of the day can take up to 20 seconds.',
   },
   country: {
     capital: 'Capital',
@@ -89,6 +92,7 @@ export const STRINGS = {
   feed: {
     heading: 'Did you know?',
     generating: 'The observatory is gathering surprising facts…',
+    generatingHint: 'Fresh facts are being composed — this can take up to 20 seconds.',
     next: 'Next fact',
     refresh: 'New facts',
     open: 'Did you know?',

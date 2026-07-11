@@ -140,6 +140,9 @@
   .welcome-enter {
     animation-delay: 1.45s;
   }
+  .welcome-credit {
+    animation-delay: 1.8s;
+  }
 }
 
 @keyframes rise {
@@ -204,6 +207,61 @@
     background: rgba(201, 162, 75, 0.12);
     border-color: var(--gold-300);
     box-shadow: 0 0 30px rgba(201, 162, 75, 0.18);
+  }
+}
+
+.welcome-credit {
+  margin: 1.6rem 0 0;
+  font-size: 0.72rem;
+  font-weight: 300;
+  letter-spacing: 0.12em;
+  color: var(--text-300);
+  opacity: 0.55;
+}
+
+/* --- Cold-start loading chip, bottom-center --- */
+.map-loading {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 1.3rem;
+  border: 1px solid rgba(201, 162, 75, 0.35);
+  border-radius: 999px;
+  background: rgba(11, 15, 23, 0.85);
+  backdrop-filter: blur(10px);
+  animation: welcome-fade-in 0.8s ease both;
+
+  .map-loading-text p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--text-100);
+
+    &.map-loading-hint {
+      font-size: 0.7rem;
+      color: var(--text-300);
+      opacity: 0.8;
+    }
+  }
+}
+
+.map-loading-spinner {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  border: 2px solid rgba(201, 162, 75, 0.25);
+  border-top-color: var(--gold-400);
+  border-radius: 50%;
+  animation: map-loading-spin 0.9s linear infinite;
+}
+
+@keyframes map-loading-spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 
