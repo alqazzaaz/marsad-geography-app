@@ -106,10 +106,13 @@
   z-index: 3;
   width: 34px;
   height: 34px;
-  border: 1px solid rgba(201, 162, 75, 0.35);
+  border: 1px solid rgba(201, 162, 75, 0.55);
   border-radius: 50%;
-  background: transparent;
-  color: var(--text-300);
+  /* Always on a dark chip so it reads over any hero image. */
+  background: rgba(7, 10, 16, 0.55);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+  color: #f2efe8;
   font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.25s ease;
