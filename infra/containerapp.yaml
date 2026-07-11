@@ -1,8 +1,8 @@
-﻿# Marsad backend â€” Azure Container Apps specification.
+# Marsad backend - Azure Container Apps specification.
 # Apply with:  az containerapp update -n marsad-backend -g marsad-rg --yaml infra/containerapp.yaml
 #
 # THE configuration file for backend scaling and runtime environment.
-# Secret VALUES are never in this file â€” they live as Container Apps secrets
+# Secret VALUES are never in this file - they live as Container Apps secrets
 # (az containerapp secret set ...); this spec references them by name.
 properties:
   configuration:
@@ -10,7 +10,7 @@ properties:
       external: true
       targetPort: 8000
       transport: auto
-    secrets: []  # values managed via `az containerapp secret set` â€” see infra/DEPLOYMENT.md
+    secrets: []  # values managed via `az containerapp secret set` - see infra/DEPLOYMENT.md
   template:
     containers:
       - name: marsad-backend
@@ -40,7 +40,7 @@ properties:
           - name: MAP_PROMOTED_COUNTRIES
             value: PS,PSE
     scale:
-      # â”€â”€ THE ONE-LINE TOGGLE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      # ------------------ THE ONE-LINE TOGGLE ------------------------------
       # 0 = free tier, scales to zero when idle (cold start on first hit).
       # 1 = always warm (paid). Change this line + re-apply, nothing else.
       minReplicas: 0

@@ -138,6 +138,11 @@ jobs:
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Apply container app spec (port, env, scaling)
+        if: steps.gate.outputs.enabled == 'true'
+        run: |
+          az containerapp update -n marsad-backend -g marsad-rg \
+            --yaml infra/containerapp.yaml
       - name: Roll out new revision
         if: steps.gate.outputs.enabled == 'true'
         run: |
