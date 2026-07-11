@@ -130,7 +130,7 @@
 }
 
 /* Mobile: collapse the cluster into a dropdown so it never crowds the brand. */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .menu-btn {
     display: inline-block;
   }

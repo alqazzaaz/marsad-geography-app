@@ -3,7 +3,9 @@
   top: 0;
   right: 0;
   bottom: 0;
-  width: min(420px, 75vw);
+  /* Desktop: fixed 420px. Phones: ~60% of the screen (min 240px) so the
+     map stays genuinely visible behind the panel. */
+  width: clamp(240px, 60vw, 420px);
   z-index: 20;
   display: block;
   animation: slide-in 0.45s cubic-bezier(0.22, 1, 0.36, 1);
@@ -543,6 +545,21 @@
 }
 
 @media (max-width: 420px) {
+  .emblem-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Narrow panel on phones: reclaim the horizontal padding. */
+@media (max-width: 768px) {
+  .panel-body {
+    padding: 1.8rem 1.1rem 1.2rem;
+  }
+
+  .ask-dock {
+    padding: 0.8rem 1.1rem 0.9rem;
+  }
+
   .emblem-grid {
     grid-template-columns: 1fr;
   }
