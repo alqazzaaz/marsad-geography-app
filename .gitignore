@@ -32,3 +32,6 @@ Thumbs.db
 
 # --- Design exploration (local only) ---
 design-alternatives/
+
+# --- AI session context (local handoff doc) ---
+PROJECT_CONTEXT.md
