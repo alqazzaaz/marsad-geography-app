@@ -105,6 +105,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
   private hoveredCountryId: string | number | null = null;
   private styleLoaded = false;
   private handlersBound = false;
+  private welcomePlayed = false;
   private pulseFrame: number | null = null;
   private selected: { a2: string; a3: string } | null = null;
   private capitals: Record<string, Capital[]> | null = null;
@@ -149,7 +150,27 @@ export class MapPage implements AfterViewInit, OnDestroy {
   }
 
   dismissWelcome(): void {
+    if (this.welcomeVisible()) {
+      this.playWelcomeAudio();
+    }
     this.welcomeVisible.set(false);
+  }
+
+  /** The observatory greets the traveler — once, on entering. */
+  private playWelcomeAudio(): void {
+    if (this.welcomePlayed) {
+      return;
+    }
+    this.welcomePlayed = true;
+    try {
+      const audio = new Audio('/audio/welcome.mp3');
+      audio.volume = 0.85;
+      // Triggered by a user gesture (click/touch), so autoplay policy allows
+      // it; swallow failures — the greeting is a flourish, never an error.
+      void audio.play().catch(() => undefined);
+    } catch {
+      // Audio unsupported — silently skip.
+    }
   }
 
   toggleTheme(): void {
