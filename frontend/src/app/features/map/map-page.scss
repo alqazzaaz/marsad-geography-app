@@ -121,6 +121,30 @@
   }
 }
 
+/* Entering the observatory: the veil dissolves while the camera descends. */
+.welcome.leaving {
+  animation: welcome-dissolve 0.9s ease both;
+  pointer-events: none;
+
+  .welcome-inner {
+    animation: welcome-inner-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+@keyframes welcome-dissolve {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes welcome-inner-rise {
+  to {
+    opacity: 0;
+    transform: translateY(-26px) scale(1.02);
+    filter: blur(6px);
+  }
+}
+
 .welcome-inner {
   max-width: 620px;
   padding: 0 2rem;

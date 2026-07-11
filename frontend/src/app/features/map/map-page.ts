@@ -106,6 +106,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
   private styleLoaded = false;
   private handlersBound = false;
   private welcomePlayed = false;
+  private welcomeAudio: HTMLAudioElement | null = null;
   private pulseFrame: number | null = null;
   private selected: { a2: string; a3: string } | null = null;
   private capitals: Record<string, Capital[]> | null = null;
@@ -120,6 +121,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
   // backend cold start (scale-to-zero can take ~10-20s on the first visit).
   readonly mapLoading = signal(true);
   readonly welcomeVisible = signal(true);
+  readonly welcomeLeaving = signal(false);
   readonly panelOpen = signal(false);
   readonly authOpen = signal(false);
   readonly country = signal<CountryDetail | null>(null);
@@ -128,6 +130,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
 
   async ngAfterViewInit(): Promise<void> {
     void this.loadCapitals();
+    this.preloadWelcomeAudio();
     try {
       const config = await this.configService.load();
       if (!config.mapbox_token) {
@@ -150,10 +153,21 @@ export class MapPage implements AfterViewInit, OnDestroy {
   }
 
   dismissWelcome(): void {
-    if (this.welcomeVisible()) {
-      this.playWelcomeAudio();
+    if (!this.welcomeVisible() || this.welcomeLeaving()) {
+      return;
     }
-    this.welcomeVisible.set(false);
+    this.playWelcomeAudio();
+    // The arrival: overlay dissolves while the camera slowly descends onto
+    // the world, timed to the spoken greeting (~5s).
+    this.map?.flyTo({
+      center: [24, 22],
+      zoom: 1.7,
+      duration: 5200,
+      curve: 1.1,
+      essential: true,
+    });
+    this.welcomeLeaving.set(true);
+    setTimeout(() => this.welcomeVisible.set(false), 900);
   }
 
   /** The observatory greets the traveler — once, on entering. */
@@ -163,13 +177,24 @@ export class MapPage implements AfterViewInit, OnDestroy {
     }
     this.welcomePlayed = true;
     try {
-      const audio = new Audio('/audio/welcome.mp3');
+      // Preloaded while the welcome screen showed, so it speaks instantly.
+      const audio = this.welcomeAudio ?? new Audio('/audio/welcome.mp3');
       audio.volume = 0.85;
       // Triggered by a user gesture (click/touch), so autoplay policy allows
       // it; swallow failures — the greeting is a flourish, never an error.
       void audio.play().catch(() => undefined);
     } catch {
       // Audio unsupported — silently skip.
+    }
+  }
+
+  private preloadWelcomeAudio(): void {
+    try {
+      this.welcomeAudio = new Audio('/audio/welcome.mp3');
+      this.welcomeAudio.preload = 'auto';
+      this.welcomeAudio.load();
+    } catch {
+      // Audio unsupported — playWelcomeAudio will no-op gracefully.
     }
   }
 
@@ -238,8 +263,10 @@ export class MapPage implements AfterViewInit, OnDestroy {
       container: this.mapContainer().nativeElement,
       style: MAP_STYLES[this.themeService.theme()],
       projection: 'globe',
-      center: [24, 22],
-      zoom: 1.7,
+      // Pulled back and west of the resting view — entering the observatory
+      // drifts the camera onto the world (see dismissWelcome).
+      center: [-20, 14],
+      zoom: 1.05,
       minZoom: 1,
       maxZoom: 8,
       attributionControl: true,
