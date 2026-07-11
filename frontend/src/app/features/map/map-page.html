@@ -10,25 +10,36 @@
 
   <div class="account" [class.tucked]="panelOpen()">
     <button
-      class="account-btn theme-btn"
+      class="account-btn menu-btn"
       type="button"
-      (click)="toggleTheme()"
-      [attr.aria-label]="themeService.theme() === 'night' ? t.nav.toDay : t.nav.toNight"
-      [attr.title]="themeService.theme() === 'night' ? t.nav.toDay : t.nav.toNight"
+      (click)="menuOpen.set(!menuOpen())"
+      [attr.aria-expanded]="menuOpen()"
+      aria-label="Menu"
     >
-      {{ themeService.theme() === 'night' ? '☀' : '☾' }}
+      ☰
     </button>
-    <a class="account-btn" routerLink="/about">{{ t.nav.about }}</a>
-    @if (auth.currentUser(); as user) {
-      <span class="account-name">{{ user.display_name }}</span>
-      <button class="account-btn" type="button" (click)="auth.logout()">
-        {{ t.auth.signOut }}
+    <div class="account-items" [class.open]="menuOpen()">
+      <button
+        class="account-btn theme-btn"
+        type="button"
+        (click)="toggleTheme()"
+        [attr.aria-label]="themeService.theme() === 'night' ? t.nav.toDay : t.nav.toNight"
+        [attr.title]="themeService.theme() === 'night' ? t.nav.toDay : t.nav.toNight"
+      >
+        {{ themeService.theme() === 'night' ? '☀' : '☾' }}
       </button>
-    } @else {
-      <button class="account-btn" type="button" (click)="authOpen.set(true)">
-        {{ t.auth.signIn }}
-      </button>
-    }
+      <a class="account-btn" routerLink="/about" (click)="menuOpen.set(false)">{{ t.nav.about }}</a>
+      @if (auth.currentUser(); as user) {
+        <span class="account-name">{{ user.display_name }}</span>
+        <button class="account-btn" type="button" (click)="menuOpen.set(false); auth.logout()">
+          {{ t.auth.signOut }}
+        </button>
+      } @else {
+        <button class="account-btn" type="button" (click)="menuOpen.set(false); authOpen.set(true)">
+          {{ t.auth.signIn }}
+        </button>
+      }
+    </div>
   </div>
 
   @if (authOpen()) {

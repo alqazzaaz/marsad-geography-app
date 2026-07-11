@@ -116,6 +116,68 @@
   line-height: 1;
 }
 
+/* Desktop: items inline, no hamburger. */
+.menu-btn {
+  display: none;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.account-items {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+/* Mobile: collapse the cluster into a dropdown so it never crowds the brand. */
+@media (max-width: 640px) {
+  .menu-btn {
+    display: inline-block;
+  }
+
+  .account-items {
+    display: none;
+    position: absolute;
+    top: calc(100% + 0.6rem);
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+    min-width: 180px;
+    padding: 0.7rem;
+    border: 1px solid rgba(201, 162, 75, 0.35);
+    border-radius: 14px;
+    background: rgba(var(--surface-rgb), 0.95);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+
+    &.open {
+      display: flex;
+      animation: menu-drop 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .account-btn {
+      text-align: center;
+    }
+
+    .account-name {
+      text-align: center;
+      padding: 0.2rem 0;
+    }
+  }
+}
+
+@keyframes menu-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* --- Welcome moment --- */
 .welcome {
   position: absolute;

@@ -125,6 +125,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
   readonly welcomeLeaving = signal(false);
   readonly panelOpen = signal(false);
   readonly authOpen = signal(false);
+  readonly menuOpen = signal(false);
   readonly country = signal<CountryDetail | null>(null);
   readonly countryLoading = signal(false);
   readonly countryError = signal(false);
