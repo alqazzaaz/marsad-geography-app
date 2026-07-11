@@ -1,6 +1,6 @@
 <div class="observatory">
   <div #mapContainer class="map"></div>
-  <app-shooting-stars />
+  <div class="vignette" [class.lifted]="welcomeLeaving() || !welcomeVisible()" aria-hidden="true"></div>
 
   <header class="brand" [class.tucked]="panelOpen()">
     <img src="/logo.svg" alt="" class="brand-logo" />

@@ -19,7 +19,6 @@ import { Theme, ThemeService } from '../../core/services/theme.service';
 import { AuthPanel } from '../auth/auth-panel';
 import { CountryPanel } from '../country/country-panel';
 import { FeedCard } from '../feed/feed-card';
-import { ShootingStars } from './shooting-stars';
 
 const COUNTRY_SOURCE = 'country-boundaries';
 const COUNTRY_SOURCE_LAYER = 'country_boundaries';
@@ -90,7 +89,7 @@ function countryFilter(excluded: string[], promoted: string[]): mapboxgl.FilterS
 
 @Component({
   selector: 'app-map-page',
-  imports: [AuthPanel, CountryPanel, FeedCard, RouterLink, ShootingStars],
+  imports: [AuthPanel, CountryPanel, FeedCard, RouterLink],
   templateUrl: './map-page.html',
   styleUrl: './map-page.scss',
 })
@@ -109,6 +108,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
   private welcomePlayed = false;
   private welcomeAudio: HTMLAudioElement | null = null;
   private pulseFrame: number | null = null;
+  private spinFrame: number | null = null;
   private selected: { a2: string; a3: string } | null = null;
   private capitals: Record<string, Capital[]> | null = null;
   excluded: string[] = [];
@@ -150,6 +150,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.stopPulse();
+    this.stopIdleSpin();
     this.map?.remove();
   }
 
@@ -158,17 +159,48 @@ export class MapPage implements AfterViewInit, OnDestroy {
       return;
     }
     this.playWelcomeAudio();
-    // The arrival: overlay dissolves while the camera slowly descends onto
-    // the world, timed to the spoken greeting (~5s).
+    this.stopIdleSpin();
+    // The arrival: veil dissolves, vignette lifts, and the camera inherits
+    // the idle spin's momentum for a slow descent onto the world, timed to
+    // the spoken greeting (~5s).
     this.map?.flyTo({
       center: [24, 22],
       zoom: 1.7,
-      duration: 5200,
-      curve: 1.1,
+      bearing: 0,
+      duration: 5600,
+      curve: 1.25,
       essential: true,
     });
     this.welcomeLeaving.set(true);
     setTimeout(() => this.welcomeVisible.set(false), 900);
+  }
+
+  /** Slow eastward rotation while the welcome veil is up. */
+  private startIdleSpin(): void {
+    if (this.spinFrame !== null || !this.welcomeVisible()) {
+      return;
+    }
+    let last = performance.now();
+    const tick = (now: number) => {
+      const map = this.map;
+      if (!map || !this.welcomeVisible() || this.welcomeLeaving()) {
+        this.spinFrame = null;
+        return;
+      }
+      const dt = (now - last) / 1000;
+      last = now;
+      const center = map.getCenter();
+      map.setCenter([center.lng + dt * 2.2, center.lat]); // ~2.2°/s drift
+      this.spinFrame = requestAnimationFrame(tick);
+    };
+    this.spinFrame = requestAnimationFrame(tick);
+  }
+
+  private stopIdleSpin(): void {
+    if (this.spinFrame !== null) {
+      cancelAnimationFrame(this.spinFrame);
+      this.spinFrame = null;
+    }
   }
 
   /** The observatory greets the traveler — once, on entering. */
@@ -264,10 +296,12 @@ export class MapPage implements AfterViewInit, OnDestroy {
       container: this.mapContainer().nativeElement,
       style: MAP_STYLES[this.themeService.theme()],
       projection: 'globe',
-      // Pulled back and west of the resting view — entering the observatory
-      // drifts the camera onto the world (see dismissWelcome).
-      center: [-20, 14],
-      zoom: 1.05,
+      // Pulled back and west of the resting view — the globe idles in a slow
+      // spin behind the welcome veil, and entering the observatory hands
+      // that momentum to the descent (see dismissWelcome).
+      center: [-60, 12],
+      zoom: 1,
+      bearing: -8,
       minZoom: 1,
       maxZoom: 8,
       attributionControl: true,
@@ -290,6 +324,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
       this.mapLoading.set(false);
       this.map!.setFog(FOG[this.themeService.theme()]);
       this.addCountryLayers();
+      this.startIdleSpin();
       // A theme switch replaces the whole style — restore the open selection.
       if (this.selected) {
         this.highlightSelection(this.selected.a2, this.selected.a3);
