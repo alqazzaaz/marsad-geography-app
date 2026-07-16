@@ -142,4 +142,4 @@ All phases complete — **[the observatory is live](https://marsad.alqazzaaz.com
 
 ## License
 
-Portfolio project by Abood. All rights reserved.
+Portfolio project by Abdullah Al-Qazzaz. All rights reserved.

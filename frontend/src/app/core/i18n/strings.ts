@@ -18,7 +18,7 @@ export const STRINGS = {
     line2: 'the observatory of the world.',
     line3: 'Choose a country to begin your journey.',
     enter: 'Enter the observatory',
-    credit: 'Created by Abdullah Al-Qazzaz with Claude Code',
+    credit: 'Created by Abdullah Al-Qazzaz',
   },
   map: {
     tokenMissing:
