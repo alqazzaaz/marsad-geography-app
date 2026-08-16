@@ -3,6 +3,7 @@ import {
   Component,
   ElementRef,
   OnDestroy,
+  effect,
   inject,
   signal,
   viewChild,
@@ -100,6 +101,18 @@ export class MapPage implements AfterViewInit, OnDestroy {
   readonly themeService = inject(ThemeService);
 
   private readonly mapContainer = viewChild.required<ElementRef<HTMLDivElement>>('mapContainer');
+  private readonly previewVideoRef = viewChild<ElementRef<HTMLVideoElement>>('previewVideo');
+  // The `autoplay` attribute alone isn't reliable for an element inserted
+  // dynamically (via @if) rather than present at initial parse — force
+  // playback explicitly whenever the preview mounts.
+  private readonly forcePreviewPlay = effect(() => {
+    const video = this.previewVideoRef()?.nativeElement;
+    if (!video) {
+      return;
+    }
+    video.muted = true;
+    video.play().catch(() => undefined);
+  });
 
   private map: mapboxgl.Map | null = null;
   private hoveredCountryId: string | number | null = null;
@@ -133,6 +146,12 @@ export class MapPage implements AfterViewInit, OnDestroy {
   async ngAfterViewInit(): Promise<void> {
     void this.loadCapitals();
     this.preloadWelcomeAudio();
+    // TEMP LOCAL TEST HOOK — visit /?cold=1 to simulate a cold-start delay
+    // and preview the "waking observatory" state. Safe to remove anytime;
+    // no effect unless the query param is present.
+    if (new URLSearchParams(window.location.search).has('cold')) {
+      await new Promise((r) => setTimeout(r, 20000));
+    }
     try {
       const config = await this.configService.load();
       if (!config.mapbox_token) {

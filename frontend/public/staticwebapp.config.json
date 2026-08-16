@@ -1,7 +1,7 @@
 {
   "navigationFallback": {
     "rewrite": "/index.html",
-    "exclude": ["/*.{js,css,svg,png,ico,json,webmanifest}", "/mapbox-gl-csp-worker.js", "/data/*", "/audio/*"]
+    "exclude": ["/*.{js,css,svg,png,ico,json,webmanifest}", "/mapbox-gl-csp-worker.js", "/data/*", "/audio/*", "/video/*"]
   },
   "globalHeaders": {
     "Referrer-Policy": "strict-origin-when-cross-origin"

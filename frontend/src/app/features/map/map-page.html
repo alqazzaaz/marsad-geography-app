@@ -66,6 +66,22 @@
         </button>
         <p class="welcome-credit">{{ t.welcome.credit }}</p>
       </div>
+
+      @if (mapLoading()) {
+        <div class="welcome-preview" (click)="$event.stopPropagation()">
+          <p class="welcome-preview-label">{{ t.welcome.previewLabel }}</p>
+          <video
+            #previewVideo
+            class="welcome-preview-video"
+            src="/video/demo.mp4"
+            autoplay
+            loop
+            muted
+            playsinline
+            preload="auto"
+          ></video>
+        </div>
+      }
     </div>
   }
 

@@ -342,6 +342,61 @@
   opacity: 0.55;
 }
 
+/* Cold-start preview: a looping clip for impatient visitors. Pops in as
+   its own centered window ~4.5s after the welcome veil appears, floating
+   above the welcome text beneath it. */
+.welcome-preview {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 5;
+  width: min(560px, 90vw);
+  padding: 1.2rem;
+  border: 1px solid rgba(201, 162, 75, 0.4);
+  border-radius: 20px;
+  background: rgba(var(--surface-rgb), 0.85);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.92);
+  animation: preview-pop-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) 4.5s forwards;
+}
+
+@keyframes preview-pop-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.welcome-preview-label {
+  margin: 0 0 0.7rem;
+  font-size: 0.8rem;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  color: var(--text-300);
+  opacity: 0.9;
+}
+
+.welcome-preview-video {
+  display: block;
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(201, 162, 75, 0.25);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+@media (max-width: 480px) {
+  .welcome-preview {
+    width: min(340px, 90vw);
+    padding: 0.9rem;
+  }
+}
+
 /* --- Cold-start loading chip, bottom-center --- */
 .map-loading {
   position: absolute;

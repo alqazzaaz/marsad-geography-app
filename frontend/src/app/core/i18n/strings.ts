@@ -19,6 +19,7 @@ export const STRINGS = {
     line3: 'Choose a country to begin your journey.',
     enter: 'Enter the observatory',
     credit: 'Created by Abdullah Al-Qazzaz',
+    previewLabel: 'For the impatient — a quick look inside:',
   },
   map: {
     tokenMissing:
