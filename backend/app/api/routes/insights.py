@@ -123,7 +123,7 @@ async def get_country_media(
 
     cached = await service.get_cached(alpha2, KIND_MEDIA)
     if cached is None:
-        banner = await fetch_banner(raw["name"])
+        banner = await fetch_banner(raw["name"], alpha2)
         cached = await service.store(alpha2, KIND_MEDIA, {"banner_url": banner}, MEDIA_MODEL)
 
     return {"banner_url": cached["data"].get("banner_url")}

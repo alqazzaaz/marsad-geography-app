@@ -29,6 +29,15 @@ import { areaComparison, populationComparison, StatComparison } from '../../core
 const POLL_INTERVAL_MS = 3000;
 const POLL_MAX_ATTEMPTS = 30; // give up after ~90s
 
+// The hero watermark is a single-line decorative script — some countries'
+// full official native names (e.g. "دولة الإمارات العربية المتحدة") don't
+// fit and get ellipsis-truncated. This trims a few to their short common
+// form for that one display only; the full name still shows in the facts
+// list below. Not a hard-fact change — purely cosmetic.
+const HERO_NAME_OVERRIDES: Record<string, string> = {
+  AE: 'الإمارات',
+};
+
 type AiState = 'idle' | 'generating' | 'ready' | 'limited' | 'error';
 
 /** Polling state machine for one kind of AI content (insights / culture). */
@@ -238,6 +247,11 @@ export class CountryPanel {
 
   regionClass(country: CountryDetail): string {
     return 'region-' + (country.region ?? 'world').toLowerCase().replace(/\s+/g, '-');
+  }
+
+  /** Short form for the hero watermark only — see HERO_NAME_OVERRIDES. */
+  heroName(country: CountryDetail): string {
+    return HERO_NAME_OVERRIDES[country.alpha2_code] ?? (country.native_name || country.name);
   }
 
   populationCompare(country: CountryDetail): StatComparison | null {

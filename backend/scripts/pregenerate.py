@@ -97,7 +97,7 @@ async def _process_country(
         # Hero banner: free Wikimedia lookup, cached forever like the rest.
         if not dry_run and await service.get_cached(code, KIND_MEDIA) is None:
             try:
-                banner = await fetch_banner(name)
+                banner = await fetch_banner(name, code)
                 await service.store(code, KIND_MEDIA, {"banner_url": banner}, MEDIA_MODEL)
             except Exception:
                 logger.exception("Banner failed: %s", code)

@@ -22,20 +22,36 @@ MEDIA_MODEL = "wikimedia"
 HEADERS = {"User-Agent": "Marsad/1.0 (https://github.com/alqazzaaz/marsad-geography-app)"}
 TIMEOUT = httpx.Timeout(8.0)
 
+# Curated overrides for countries whose automated Wikivoyage banner (P948)
+# is accurate but unrepresentative (e.g. a generic heritage-site photo
+# instead of the country's most iconic view). Still exact-source — just an
+# exact Wikipedia article title chosen by hand instead of the algorithmic
+# P948 pick. A missing banner still beats a wrong one; this only replaces
+# a *right-but-dull* one.
+BANNER_TITLE_OVERRIDES: dict[str, str] = {
+    "AE": "Dubai",  # P948 picks a generic old-town photo, not the skyline.
+}
+
 
 def simple_name(name: str) -> str:
     """'Palestine, State of' -> 'Palestine'; 'Korea (Republic of)' -> 'Korea'."""
     return name.split(",")[0].split("(")[0].strip()
 
 
-async def fetch_banner(country_name: str) -> str | None:
+async def fetch_banner(country_name: str, alpha2: str | None = None) -> str | None:
     """Wide hero image for a country page, or None.
 
-    ONLY Wikidata P948 — the human-curated Wikivoyage page banner — is used.
-    No fuzzy fallbacks: a missing banner beats a wrong one.
+    Normally ONLY Wikidata P948 — the human-curated Wikivoyage page banner —
+    is used. A handful of countries have a hand-picked exact-title override
+    instead (BANNER_TITLE_OVERRIDES); no fuzzy fallbacks either way: a
+    missing banner beats a wrong one.
     """
-    name = simple_name(country_name)
     async with httpx.AsyncClient(headers=HEADERS, timeout=TIMEOUT) as client:
+        override_title = BANNER_TITLE_OVERRIDES.get((alpha2 or "").upper())
+        if override_title:
+            return await _page_thumbnail(client, override_title, size=1400)
+
+        name = simple_name(country_name)
         qid = await _wikidata_entity(client, name)
         if not qid:
             return None
@@ -126,7 +142,7 @@ async def enrich_emblems_with_images(
     return emblems
 
 
-async def _page_thumbnail(client: httpx.AsyncClient, title: str) -> str | None:
+async def _page_thumbnail(client: httpx.AsyncClient, title: str, size: int = 500) -> str | None:
     try:
         response = await client.get(
             "https://en.wikipedia.org/w/api.php",
@@ -136,7 +152,7 @@ async def _page_thumbnail(client: httpx.AsyncClient, title: str) -> str | None:
                 "titles": title,
                 "redirects": 1,
                 "prop": "pageimages",
-                "pithumbsize": 500,
+                "pithumbsize": size,
             },
         )
         pages = response.json().get("query", {}).get("pages", {})
