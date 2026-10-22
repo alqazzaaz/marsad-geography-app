@@ -25,7 +25,12 @@ from app.services.insights_service import (
     KIND_INSIGHTS,
     InsightsService,
 )
-from app.services.media_service import KIND_MEDIA, MEDIA_MODEL, fetch_banner
+from app.services.media_service import (
+    BANNER_TITLE_OVERRIDES,
+    KIND_MEDIA,
+    MEDIA_MODEL,
+    fetch_banner,
+)
 
 router = APIRouter(prefix="/countries", tags=["insights"])
 
@@ -122,8 +127,16 @@ async def get_country_media(
     alpha2 = raw["alpha2Code"]
 
     cached = await service.get_cached(alpha2, KIND_MEDIA)
-    if cached is None:
+    # A banner cached before its country got a hand-picked override is
+    # refetched once; the override title is stored so it isn't refetched again.
+    override = BANNER_TITLE_OVERRIDES.get(alpha2)
+    if cached is None or (override and cached["data"].get("override") != override):
         banner = await fetch_banner(raw["name"], alpha2)
-        cached = await service.store(alpha2, KIND_MEDIA, {"banner_url": banner}, MEDIA_MODEL)
+        # A failed override lookup keeps the old banner rather than caching none.
+        if cached is None or banner:
+            data = {"banner_url": banner}
+            if override:
+                data["override"] = override
+            cached = await service.store(alpha2, KIND_MEDIA, data, MEDIA_MODEL)
 
     return {"banner_url": cached["data"].get("banner_url")}
