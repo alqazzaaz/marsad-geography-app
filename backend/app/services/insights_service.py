@@ -43,7 +43,11 @@ class InsightsService:
         """Return cached insight payload (Redis, then PostgreSQL) or None."""
         code = code.upper()
 
-        cached = await self._cache.get(REDIS_KEY.format(kind=kind, code=code))
+        try:
+            cached = await self._cache.get(REDIS_KEY.format(kind=kind, code=code))
+        except redis.RedisError:
+            logger.warning("Redis read failed for %s/%s — falling back to PostgreSQL", kind, code)
+            cached = None
         if cached:
             return json.loads(cached)
 
@@ -56,7 +60,10 @@ class InsightsService:
         return None
 
     async def is_generating(self, code: str, kind: str) -> bool:
-        return bool(await self._cache.exists(PENDING_KEY.format(kind=kind, code=code.upper())))
+        try:
+            return bool(await self._cache.exists(PENDING_KEY.format(kind=kind, code=code.upper())))
+        except redis.RedisError:
+            return False
 
     async def request_generation(self, code: str, kind: str) -> bool:
         """Enqueue a generation job unless one is already in flight.
@@ -105,8 +112,11 @@ class InsightsService:
         return {"data": data, "generated_at": generated_at.isoformat()}
 
     async def _write_redis(self, code: str, kind: str, payload: dict[str, Any]) -> None:
-        await self._cache.set(
-            REDIS_KEY.format(kind=kind, code=code),
-            json.dumps(payload),
-            ex=self._settings.insights_cache_ttl_seconds,
-        )
+        try:
+            await self._cache.set(
+                REDIS_KEY.format(kind=kind, code=code),
+                json.dumps(payload),
+                ex=self._settings.insights_cache_ttl_seconds,
+            )
+        except redis.RedisError:
+            logger.warning("Redis write skipped for %s/%s", kind, code)

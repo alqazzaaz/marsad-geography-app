@@ -12,6 +12,7 @@ same data is never fetched from the external API twice while fresh.
 """
 
 import json
+import logging
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
@@ -24,6 +25,8 @@ from app.core.config import get_settings
 from app.models.cache_sync import CacheSync
 from app.models.country import Country
 from app.services.countries_client import CountriesClient
+
+logger = logging.getLogger(__name__)
 
 DATASET_ALL_COUNTRIES = "countries_full"
 
@@ -51,7 +54,7 @@ class CountryService:
         """Return (raw country payload, cache source) for an alpha-2/3 code."""
         code = code.strip().upper()
 
-        cached = await self._cache.get(REDIS_KEY_ONE.format(code=code))
+        cached = await self._read_redis(REDIS_KEY_ONE.format(code=code))
         if cached:
             return json.loads(cached), SOURCE_REDIS
 
@@ -68,7 +71,7 @@ class CountryService:
 
     async def get_all_countries(self) -> tuple[list[dict[str, Any]], str]:
         """Return (all raw country payloads, cache source)."""
-        cached = await self._cache.get(REDIS_KEY_ALL)
+        cached = await self._read_redis(REDIS_KEY_ALL)
         if cached:
             return json.loads(cached), SOURCE_REDIS
 
@@ -139,15 +142,31 @@ class CountryService:
         )
         await self._db.execute(stmt)
 
+    # Redis is only a speed layer: on an outage, reads count as misses and
+    # writes are skipped, so PostgreSQL keeps serving.
+
+    async def _read_redis(self, key: str) -> str | None:
+        try:
+            return await self._cache.get(key)
+        except redis.RedisError:
+            logger.warning("Redis read failed for %s — falling back to PostgreSQL", key)
+            return None
+
     async def _write_redis_one(self, raw: dict[str, Any]) -> None:
         """Cache a country under both its alpha-2 and alpha-3 codes."""
         ttl = self._settings.country_cache_ttl_seconds
         payload = json.dumps(raw)
-        async with self._cache.pipeline(transaction=False) as pipe:
-            pipe.set(REDIS_KEY_ONE.format(code=raw["alpha2Code"]), payload, ex=ttl)
-            pipe.set(REDIS_KEY_ONE.format(code=raw["alpha3Code"]), payload, ex=ttl)
-            await pipe.execute()
+        try:
+            async with self._cache.pipeline(transaction=False) as pipe:
+                pipe.set(REDIS_KEY_ONE.format(code=raw["alpha2Code"]), payload, ex=ttl)
+                pipe.set(REDIS_KEY_ONE.format(code=raw["alpha3Code"]), payload, ex=ttl)
+                await pipe.execute()
+        except redis.RedisError:
+            logger.warning("Redis write skipped for country %s", raw["alpha2Code"])
 
     async def _write_redis_all(self, payloads: list[dict[str, Any]]) -> None:
         ttl = self._settings.country_cache_ttl_seconds
-        await self._cache.set(REDIS_KEY_ALL, json.dumps(payloads), ex=ttl)
+        try:
+            await self._cache.set(REDIS_KEY_ALL, json.dumps(payloads), ex=ttl)
+        except redis.RedisError:
+            logger.warning("Redis write skipped for %s", REDIS_KEY_ALL)

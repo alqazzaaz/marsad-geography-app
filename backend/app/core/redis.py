@@ -16,7 +16,14 @@ def get_redis() -> redis.Redis:
     """Return a Redis client backed by a shared connection pool."""
     global _pool
     if _pool is None:
-        _pool = redis.ConnectionPool.from_url(get_settings().redis_url, decode_responses=True)
+        # Short timeouts: Redis is a cache, so an outage should degrade to
+        # PostgreSQL quickly rather than hang every request.
+        _pool = redis.ConnectionPool.from_url(
+            get_settings().redis_url,
+            decode_responses=True,
+            socket_connect_timeout=2,
+            socket_timeout=2,
+        )
     return redis.Redis(connection_pool=_pool)
 
 

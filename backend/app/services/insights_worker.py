@@ -9,6 +9,7 @@ import asyncio
 import json
 import logging
 
+import redis.asyncio as redis
 from app.core.redis import get_redis
 from app.db.session import async_session_factory
 from app.services.claude_client import BudgetExceededError, ClaudeClient, ClaudeGenerationError
@@ -32,7 +33,22 @@ logger = logging.getLogger(__name__)
 MAX_CONCURRENT_JOBS = 3
 
 
+RECONNECT_DELAY_SECONDS = 15
+
+
 async def run_insights_worker() -> None:
+    """Consume generation jobs, resubscribing whenever Redis drops out."""
+    while True:
+        try:
+            await _consume_jobs()
+        except redis.RedisError:
+            logger.warning(
+                "Insights worker lost Redis — retrying in %ds", RECONNECT_DELAY_SECONDS
+            )
+            await asyncio.sleep(RECONNECT_DELAY_SECONDS)
+
+
+async def _consume_jobs() -> None:
     cache = get_redis()
     pubsub = cache.pubsub()
     await pubsub.subscribe(JOBS_CHANNEL)
@@ -64,8 +80,9 @@ async def run_insights_worker() -> None:
         for task in tasks:
             task.cancel()
         await pubsub.unsubscribe(JOBS_CHANNEL)
-        await pubsub.aclose()
         raise
+    finally:
+        await pubsub.aclose()
 
 
 async def _process_job(code: str, kind: str) -> None:

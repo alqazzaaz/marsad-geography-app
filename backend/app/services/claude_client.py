@@ -233,7 +233,13 @@ class ClaudeClient:
         return BUDGET_KEY.format(day=datetime.now(timezone.utc).strftime("%Y-%m-%d"))
 
     async def budget_available(self) -> bool:
-        spent = await self._cache.get(self._budget_key())
+        # Fail closed: without Redis the day's spend is unknown, so no new
+        # Claude calls. Cached content is unaffected.
+        try:
+            spent = await self._cache.get(self._budget_key())
+        except redis.RedisError:
+            logger.warning("Redis unavailable — budget guard blocking generation")
+            return False
         return float(spent or 0.0) < self._settings.claude_daily_budget_usd
 
     async def _record_spend(self, input_tokens: int, output_tokens: int) -> None:
